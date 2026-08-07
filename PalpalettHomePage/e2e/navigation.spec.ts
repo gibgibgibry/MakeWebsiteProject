@@ -29,6 +29,41 @@ test.describe("page navigation", () => {
   }
 });
 
+test.describe("company page", () => {
+  test("shows the real company details", async ({ page }) => {
+    await page.goto("/company");
+
+    await expect(page.getByText("有限会社パルパレット（Palpallette）")).toBeVisible();
+    await expect(page.getByText("1998年", { exact: true })).toBeVisible();
+    await expect(page.getByText("白井秀子", { exact: true })).toBeVisible();
+    await expect(
+      page.getByText("〒178-0063 東京都練馬区東大泉7-32-6"),
+    ).toBeVisible();
+
+    // 社名の由来は代表の言葉で、この会社を最もよく表す部分なので必ず載せる
+    await expect(
+      page.getByRole("heading", { name: "社名の由来" }),
+    ).toBeVisible();
+
+    // プレースホルダが残っていないこと
+    await expect(page.getByText("◯")).toHaveCount(0);
+  });
+});
+
+test.describe("business page", () => {
+  test("lists all service categories", async ({ page }) => {
+    await page.goto("/business");
+    for (const title of [
+      "雑誌デザイン",
+      "コミックス・書籍の装丁",
+      "ポスター・パンフレット・チラシ",
+      "ロゴ・グッズデザイン",
+    ]) {
+      await expect(page.getByRole("heading", { name: title })).toBeVisible();
+    }
+  });
+});
+
 test.describe("contact page", () => {
   test("shows contact details instead of a form", async ({ page }) => {
     await page.goto("/contact");
