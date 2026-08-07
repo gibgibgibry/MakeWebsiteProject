@@ -176,6 +176,43 @@ test.describe("lightbox", () => {
     await expect(page.locator("body")).not.toHaveCSS("overflow", "hidden");
   });
 
+  // 閉じる経路ごとにスクロールロックの解除を確認する。
+  // 解除漏れはページが操作不能になる重大バグなので、経路を1つずつ潰しておく。
+  for (const { name, close } of [
+    {
+      name: "Escape キー",
+      close: (page: import("@playwright/test").Page) =>
+        page.keyboard.press("Escape"),
+    },
+    {
+      name: "閉じるボタン",
+      close: (page: import("@playwright/test").Page) =>
+        page.getByRole("button", { name: "拡大表示を閉じる" }).click(),
+    },
+    {
+      name: "背景クリック",
+      close: (page: import("@playwright/test").Page) =>
+        // ::backdrop のクリックは dialog 自身がターゲットになる。
+        // locator.click の position は「要素基準」でダイアログ内部を叩いてしまうため、
+        // ビューポート座標で外側を突く必要がある。
+        page.mouse.click(2, 2),
+    },
+  ]) {
+    test(`releases the scroll lock when closed via ${name}`, async ({ page }) => {
+      await page.goto("/works/belove-2025-04");
+
+      await page.getByRole("button", { name: /画像 1 を拡大表示/ }).click();
+      const dialog = page.getByRole("dialog");
+      await expect(dialog).toBeVisible();
+      await expect(page.locator("body")).toHaveCSS("overflow", "hidden");
+
+      await close(page);
+
+      await expect(dialog).toBeHidden();
+      await expect(page.locator("body")).not.toHaveCSS("overflow", "hidden");
+    });
+  }
+
   test("hides paging controls for a single-image work", async ({ page }) => {
     await page.goto("/works/chihayafuru-comic-guide");
 
