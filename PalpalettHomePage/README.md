@@ -20,6 +20,38 @@ Next.js 16 (App Router) + TypeScript + Tailwind CSS v4 で構築。
 npm install
 ```
 
+## 環境変数
+
+`PalpalettHomePage/.env.local`（`src/` の中ではなくプロジェクト直下）に作成する。
+**このファイルはリポジトリに含めない。**`.gitignore` の `.env*` により
+`.env.example` も無視されるため、正はこの表とする。
+
+| 変数 | 必須 | 用途 |
+|---|---|---|
+| `MICROCMS_SERVICE_DOMAIN` | ✅ | microCMS のサービスドメイン（`https://<これ>.microcms.io`） |
+| `MICROCMS_API_KEY` | ✅ | microCMS の APIキー。**取得(GET)のみ**の権限で発行する |
+| `MICROCMS_WEBHOOK_SECRET` | ✅ | Webhook の署名検証用シークレット |
+| `NEXT_PUBLIC_SITE_URL` | ✅(公開時) | 公開オリジン（例 `https://example.com`）。OGP と sitemap の絶対URLに使う |
+| `MICROCMS_BASE_URL` | – | APIのベースURLを上書きする。e2e のモック用。本番では `*.microcms.io` 以外を拒否する |
+
+`MICROCMS_API_KEY` に `NEXT_PUBLIC_` を付けないこと。付けるとクライアントバンドルに
+埋め込まれて公開される。
+
+`NEXT_PUBLIC_SITE_URL` は**ビルド時にバンドルへ埋め込まれる**ため、
+ドメインを変えたら再ビルドが必要（Webhookの再検証では変わらない）。
+
+一時的に環境変数を指定してビルドする場合:
+
+```powershell
+# PowerShell
+$env:NEXT_PUBLIC_SITE_URL='https://example.com'; npm run build
+```
+
+```bash
+# bash
+NEXT_PUBLIC_SITE_URL='https://example.com' npm run build
+```
+
 ## 開発
 
 ```bash

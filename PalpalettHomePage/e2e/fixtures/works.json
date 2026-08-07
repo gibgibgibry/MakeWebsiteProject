@@ -1,0 +1,122 @@
+{
+  "contents": [
+    {
+      "id": "belove-2025-04",
+      "title": "BE・LOVE 2025年4月号 表紙",
+      "client": "株式会社講談社『BE・LOVE』",
+      "category": {
+        "id": "magazine",
+        "name": "雑誌",
+        "order": 1,
+        "createdAt": "2026-01-10T00:00:00.000Z",
+        "updatedAt": "2026-01-10T00:00:00.000Z",
+        "publishedAt": "2026-01-10T00:00:00.000Z",
+        "revisedAt": "2026-01-10T00:00:00.000Z"
+      },
+      "coverImage": {
+        "url": "http://127.0.0.1:4010/assets/belove-2025-04.png",
+        "width": 710,
+        "height": 1024
+      },
+      "gallery": [
+        {
+          "fieldId": "workImage",
+          "image": {
+            "url": "http://127.0.0.1:4010/assets/belove-2025-04-spread1.png",
+            "width": 1200,
+            "height": 850
+          },
+          "caption": "特集扉"
+        },
+        {
+          "fieldId": "workImage",
+          "image": {
+            "url": "http://127.0.0.1:4010/assets/belove-2025-04-spread2.png",
+            "width": 1200,
+            "height": 850
+          }
+        }
+      ],
+      "year": 2025,
+      "publishedOn": "2025-03-19T00:00:00.000Z",
+      "role": ["装丁", "本文デザイン"],
+      "description": "表紙まわりのデザインを担当しました。\n春らしい配色でまとめています。",
+      "order": 1,
+      "featured": true,
+      "createdAt": "2026-01-10T00:00:00.000Z",
+      "updatedAt": "2026-01-10T00:00:00.000Z",
+      "publishedAt": "2026-01-10T00:00:00.000Z",
+      "revisedAt": "2026-01-10T00:00:00.000Z"
+    },
+    {
+      "id": "chihayafuru-comic-guide",
+      "title": "ちはやふる 公式コミックガイド",
+      "client": "株式会社講談社",
+      "category": {
+        "id": "comics",
+        "name": "コミックス・書籍",
+        "order": 2,
+        "createdAt": "2026-01-10T00:00:00.000Z",
+        "updatedAt": "2026-01-10T00:00:00.000Z",
+        "publishedAt": "2026-01-10T00:00:00.000Z",
+        "revisedAt": "2026-01-10T00:00:00.000Z"
+      },
+      "coverImage": {
+        "url": "http://127.0.0.1:4010/assets/chihayafuru-guide.png",
+        "width": 750,
+        "height": 1050
+      },
+      "year": 2019,
+      "role": ["装丁"],
+      "description": "カバーおよび本文のデザインを担当しました。",
+      "order": 2,
+      "featured": true,
+      "createdAt": "2026-01-10T00:00:00.000Z",
+      "updatedAt": "2026-01-10T00:00:00.000Z",
+      "publishedAt": "2026-01-10T00:00:00.000Z",
+      "revisedAt": "2026-01-10T00:00:00.000Z"
+    },
+    {
+      "id": "unpublished-category-work",
+      "title": "カテゴリー未公開の作品",
+      "category": null,
+      "coverImage": {
+        "url": "http://127.0.0.1:4010/assets/no-category.png",
+        "width": 800,
+        "height": 800
+      },
+      "year": 2018,
+      "createdAt": "2026-01-10T00:00:00.000Z",
+      "updatedAt": "2026-01-10T00:00:00.000Z",
+      "publishedAt": "2026-01-10T00:00:00.000Z",
+      "revisedAt": "2026-01-10T00:00:00.000Z"
+    },
+    {
+      "id": "very-long-title-flyer",
+      "title": "マグカル・パフォーミング・アカデミー募集要項およびイベント告知用チラシ一式のデザイン制作",
+      "client": "イベント主催者",
+      "category": {
+        "id": "poster",
+        "name": "ポスター・チラシ",
+        "order": 3,
+        "createdAt": "2026-01-10T00:00:00.000Z",
+        "updatedAt": "2026-01-10T00:00:00.000Z",
+        "publishedAt": "2026-01-10T00:00:00.000Z",
+        "revisedAt": "2026-01-10T00:00:00.000Z"
+      },
+      "coverImage": {
+        "url": "http://127.0.0.1:4010/assets/flyer.png",
+        "width": 1000,
+        "height": 1414
+      },
+      "year": 2018,
+      "createdAt": "2026-01-10T00:00:00.000Z",
+      "updatedAt": "2026-01-10T00:00:00.000Z",
+      "publishedAt": "2026-01-10T00:00:00.000Z",
+      "revisedAt": "2026-01-10T00:00:00.000Z"
+    }
+  ],
+  "totalCount": 4,
+  "offset": 0,
+  "limit": 100
+}

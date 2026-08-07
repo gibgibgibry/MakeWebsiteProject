@@ -1,0 +1,34 @@
+{
+  "contents": [
+    {
+      "id": "magazine",
+      "name": "雑誌",
+      "order": 1,
+      "createdAt": "2026-01-10T00:00:00.000Z",
+      "updatedAt": "2026-01-10T00:00:00.000Z",
+      "publishedAt": "2026-01-10T00:00:00.000Z",
+      "revisedAt": "2026-01-10T00:00:00.000Z"
+    },
+    {
+      "id": "comics",
+      "name": "コミックス・書籍",
+      "order": 2,
+      "createdAt": "2026-01-10T00:00:00.000Z",
+      "updatedAt": "2026-01-10T00:00:00.000Z",
+      "publishedAt": "2026-01-10T00:00:00.000Z",
+      "revisedAt": "2026-01-10T00:00:00.000Z"
+    },
+    {
+      "id": "poster",
+      "name": "ポスター・チラシ",
+      "order": 3,
+      "createdAt": "2026-01-10T00:00:00.000Z",
+      "updatedAt": "2026-01-10T00:00:00.000Z",
+      "publishedAt": "2026-01-10T00:00:00.000Z",
+      "revisedAt": "2026-01-10T00:00:00.000Z"
+    }
+  ],
+  "totalCount": 3,
+  "offset": 0,
+  "limit": 100
+}
