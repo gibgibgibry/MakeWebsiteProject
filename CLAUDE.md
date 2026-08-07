@@ -43,11 +43,18 @@ npx playwright test e2e/navigation.spec.ts -g "contact page"   # run a single te
 
 - Next.js App Router, TypeScript, `PalpalettHomePage/src/` layout, path alias `@/*` →
   `PalpalettHomePage/src/*`.
-- Tailwind CSS v4: no `tailwind.config`; design tokens (colors, fonts) are declared in
-  `PalpalettHomePage/src/app/globals.css` via `@theme inline`. Custom tokens:
-  `paper`/`ink`/`ink-soft`/`accent`/`line` colors, and `font-sans` (Noto Sans JP) / `font-serif`
-  (Shippori Mincho) — use the standard Tailwind `font-sans`/`font-serif` utilities rather than
-  inventing new font utility names.
+- Tailwind CSS v4: no `tailwind.config`; design tokens are declared in
+  `PalpalettHomePage/src/app/globals.css` via `@theme inline`.
+- **The brand pink has three tiers and they are not interchangeable.** `#ff80ff` has only
+  2.15:1 contrast on white, so it is decoration-only. Measured ratios are recorded in
+  `globals.css`; re-measure if you change any value.
+  - `brand` `#ff80ff` (2.15:1) — decorative fills only. **Never text, never icons.**
+  - `brand-ui` `#e0439f` (3.84:1) — focus rings, borders, type ≥24px
+  - `brand-ink` `#c2187f` (5.63:1) — body-size text, links, filled buttons with white text
+  - also `line` `#ece3e9` is decorative-only (1.26:1); use `line-strong` `#8a7a86` (4.03:1)
+    for a border that is the sole indicator of a control.
+- Fonts: `font-sans` = Noto Sans JP (body), `font-display` = Zen Maru Gothic (headings).
+  The rounded gothic is deliberate — it carries the 「柔らかい」 brand. Mincho was removed.
 - Fonts are loaded via `next/font/google` in `PalpalettHomePage/src/app/layout.tsx` with
   `preload: false`. Do not re-enable preload — these CJK font families are split into ~300+
   unicode-range chunks each, and preloading all of them bloats the page and destabilizes any
@@ -64,8 +71,45 @@ npx playwright test e2e/navigation.spec.ts -g "contact page"   # run a single te
   西武池袋線 大泉学園駅 徒歩11分.
 - `PalpalettHomePage/next.config.ts` pins `turbopack.root` explicitly (via `__dirname`) because a
   stray lockfile in the parent user directory otherwise causes Next to misdetect the workspace
-  root.
-- Target deployment is Vercel; no special config needed beyond the standard Next.js build.
+  root. **Do not remove it when editing `images`.**
+
+### microCMS / ISR — the parts that are easy to break
+
+- Data layer is `src/lib/microcms/`, using plain `fetch` (not `microcms-js-sdk`) so that
+  `next: { tags }` is passed natively rather than through an undocumented SDK path.
+- **`microcmsFetch` must throw on any non-404 failure.** Returning `[]` on a transient CMS 5xx
+  would overwrite a good cached page with an empty one and serve that until the next
+  revalidation. Throwing makes Next keep serving the last good render. Only
+  `getWorkSlugs` (used by `generateStaticParams`) swallows errors, so a CMS outage can't
+  block an unrelated deploy.
+- **`dynamicParams` must stay `true`** in `works/[slug]`. `generateStaticParams` is not re-run
+  during ISR, so newly published works only render via on-demand generation.
+- **`revalidateTag` takes two arguments in v16** — `revalidateTag(tag, { expire: 0 })`.
+  Use `{ expire: 0 }`, not `'max'`: stale-while-revalidate would serve a deleted work once more.
+- microCMS `limit` defaults to 10 and caps at 100 — always pass it explicitly.
+- A referenced category that is still a draft comes back as `null`; `Work["category"]` is
+  nullable for that reason. Never pass `depth=0`.
+- Images: `images.remotePatterns` must **omit `search`** — microCMS URLs carry query strings and
+  `search: ""` would reject every one. Don't set `quality` (v16 allows only `[75]` by default).
+  Use the `preload` prop, not the deprecated `priority`.
+- `/works` filters categories client-side on purpose; `searchParams` would make the route
+  dynamic and kill ISR.
+- The webhook at `src/app/api/revalidate/route.ts` must never gain a side effect beyond cache
+  invalidation — microCMS signatures have no timestamp, so replay is possible.
+
+### Testing
+
+- e2e runs against a local mock (`e2e/mock-microcms.mjs`) via the `MICROCMS_BASE_URL` seam.
+  Playwright's `page.route` cannot intercept these calls because they happen server-side.
+- Test env vars are injected through `webServer.env`, which is what keeps us from needing a
+  `.env` file.
+- Projects run in order `setup` → `chromium` → `revalidate`. The revalidate spec mutates shared
+  mock state, so it is isolated; `setup` resets state because `reuseExistingServer` can carry
+  data over between runs.
+- ISR assertions only hold against `build && start`, never `next dev`.
+
+- Target deployment is Vercel with **Root Directory set to `PalpalettHomePage`**.
+  Required env vars are documented in `PalpalettHomePage/README.md`.
 
 ## 禁止事項
 

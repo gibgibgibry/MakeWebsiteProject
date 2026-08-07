@@ -66,9 +66,82 @@ npm run test:e2e            # Playwright e2eテスト一式
 `test:e2e` はビルド＋起動を自動で行うため、事前に `npm run dev` を起動したままにしないこと
 （ポート3000が競合する）。
 
+e2e は microCMS の**モックサーバー**（`e2e/mock-microcms.mjs`）に対して実行するため、
+APIキーが無くても動く。テスト用の環境変数は `playwright.config.ts` の
+`webServer.env` から子プロセスへ注入している。
+
+## microCMS のセットアップ
+
+サービスを作成し、以下2つのAPIを「リスト形式」で定義する。
+
+### `categories` API
+
+| フィールドID | 表示名 | 種類 | 必須 |
+|---|---|---|---|
+| `name` | 表示名 | テキストフィールド | ✅ |
+| `order` | 表示順 | 数値 | – |
+
+コンテンツIDは `magazine` / `comics` / `poster` / `logo` のように**半角英小文字**で手入力する。
+
+### `works` API
+
+| フィールドID | 表示名 | 種類 | 必須 |
+|---|---|---|---|
+| `title` | 作品名 | テキストフィールド | ✅ |
+| `client` | クライアント・掲載媒体 | テキストフィールド | – |
+| `category` | カテゴリー | コンテンツ参照（`categories`・単一） | ✅ |
+| `coverImage` | メインビジュアル | 画像 | ✅ |
+| `gallery` | 追加画像 | 繰り返しフィールド（カスタム `workImage`: 画像 + `caption`テキスト） | – |
+| `year` | 制作年 | 数値 | – |
+| `publishedOn` | 発行日 | 日時 | – |
+| `role` | 担当 | 複数選択（装丁 / 本文デザイン / ロゴ / イラスト / DTP） | – |
+| `description` | 説明 | **テキストエリア**（リッチエディタは使わない） | – |
+| `order` | 表示順 | 数値 | – |
+| `featured` | トップページに掲載 | 真偽値 | – |
+
+**重要な運用ルール**
+
+- **コンテンツIDがそのままURLになる。** 入稿時に「コンテンツIDを指定する」に
+  チェックを入れ、`belove-2025-04` のような半角英小文字・数字・ハイフンで手入力する。
+  忘れるとランダムな文字列がURLになり、後から変更できない
+- `description` は**リッチエディタにしない**。HTMLが返るとサニタイズ処理が必要になり、
+  編集者アカウントの乗っ取りがそのままXSSになる
+- カテゴリーを「下書き」のまま作品から参照すると、APIは `null` を返す。
+  カテゴリーは先に公開しておく
+- 作品が100件を超えたらページング実装が必要（現在は100件で打ち切り、
+  超過時はサーバーログに警告が出る）
+
+### APIキー
+
+**GET のみ**を許可したキーを発行する。書き込み権限は不要。
+
+### Webhook
+
+`works` と `categories` の両方に、以下のWebhookを設定する。
+
+- URL: `https://<公開ドメイン>/api/revalidate`
+- シークレット: `MICROCMS_WEBHOOK_SECRET` と同じ値
+- 署名ヘッダ: `X-MICROCMS-Signature`（HMAC-SHA256）
+
+設定後、作品を1件更新して数秒でサイトに反映されることを確認する。
+
+## 公開手順（GitHub → Vercel）
+
+1. GitHub にリポジトリを作成し push する
+   （リポジトリのルートはワークスペースルート `MakeWebsiteProject/`）
+2. Vercel で当該リポジトリを Import し、**Root Directory に `PalpalettHomePage` を指定**する
+3. Vercel の環境変数に上表の値を登録する（`NEXT_PUBLIC_SITE_URL` は独自ドメイン）
+4. デプロイ後、独自ドメインを割り当てる
+5. `NEXT_PUBLIC_SITE_URL` はビルド時に埋め込まれるため、**ドメイン確定後に再デプロイする**
+6. microCMS の Webhook を本番URLに向ける
+
 ## 未対応事項（公開前に対応）
 
 - 公開用メールアドレスが未確定（`src/app/contact/page.tsx` の `EMAIL` が `null`）
-- ロゴ画像が未配置
-- 独自ドメインが未確定
+- ロゴ画像が未配置（`public/` に配置後、ヘッダー・フッターの文字ワードマークと
+  `opengraph-image.tsx`、favicon を差し替える）
+- 独自ドメインが未確定（`NEXT_PUBLIC_SITE_URL`）
 - microCMS のサービスが未作成
+- 旧サイトからの作品移行（画像は旧サーバーから再アップロードが必要）
+- `src/lib/site.ts` の `TODO`: ドメイン確定後、`NEXT_PUBLIC_SITE_URL` 未設定の
+  本番ビルドを警告ではなくエラーにする
