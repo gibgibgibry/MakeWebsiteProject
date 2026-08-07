@@ -29,13 +29,20 @@ function readBaseUrl(serviceDomain: string | undefined): string {
     if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
       throw new Error("MICROCMS_BASE_URL must use http or https.");
     }
-    // 本番で任意のホストを向けられると、このサイトが SSRF の踏み台になりうる。
-    if (
-      process.env.NODE_ENV === "production" &&
-      !parsed.hostname.endsWith(".microcms.io")
-    ) {
+    /* 設定ミスに気づけるようにするためのガード。
+       許可するのは microCMS 本体と、e2e 用のループバックのみ。
+       e2e も `next build`（= NODE_ENV=production）で動かすため、
+       ループバックは本番ビルドでも通す必要がある。 */
+    const isMicroCmsHost = parsed.hostname.endsWith(".microcms.io");
+    const isLoopback =
+      parsed.hostname === "127.0.0.1" ||
+      parsed.hostname === "localhost" ||
+      parsed.hostname === "::1";
+
+    if (!isMicroCmsHost && !isLoopback) {
       throw new Error(
-        "MICROCMS_BASE_URL must point at a *.microcms.io host in production.",
+        "MICROCMS_BASE_URL must point at a *.microcms.io host " +
+          "(loopback is allowed for e2e tests).",
       );
     }
     return override.replace(/\/$/, "");

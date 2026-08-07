@@ -1,4 +1,7 @@
 import type { Metadata } from "next";
+import WorksGrid from "@/components/WorksGrid";
+import { isMicroCmsConfigured } from "@/lib/microcms/env";
+import { getCategories, getWorks } from "@/lib/microcms/works";
 
 export const metadata: Metadata = {
   title: "実績",
@@ -6,9 +9,17 @@ export const metadata: Metadata = {
     "Palpalletteが手がけた雑誌の表紙、コミックス・書籍の装丁、ポスターやロゴなどの実績をご紹介します。",
 };
 
-// TODO(Sprint 5): microCMS から作品を取得する一覧に差し替える。
-//   このスタブはナビゲーションが404にならないようにするための仮置き。
-export default function WorksPage() {
+/** fetch 側の revalidate と同値にしておく。
+ *  ルート全体では最小値が採用されるため、片方だけ短いと全体が引きずられる。 */
+export const revalidate = 3600;
+
+export default async function WorksPage() {
+  // microCMS 未設定でもサイト全体をビルドできるようにしておく（公開前の作業用）。
+  const configured = isMicroCmsConfigured();
+  const [works, categories] = configured
+    ? await Promise.all([getWorks(), getCategories()])
+    : [[], []];
+
   return (
     <div className="mx-auto max-w-6xl px-6 py-16 md:px-10 md:py-24">
       <p className="text-sm tracking-[0.3em] text-brand-ink">WORKS</p>
@@ -18,9 +29,13 @@ export default function WorksPage() {
         これまでに手がけた仕事をご紹介します。
       </p>
 
-      <p className="mt-16 rounded-card border border-line bg-paper-soft px-6 py-16 text-center text-sm text-ink-soft">
-        実績は準備中です。
-      </p>
+      {configured ? (
+        <WorksGrid works={works} categories={categories} />
+      ) : (
+        <p className="mt-16 rounded-card border border-line bg-paper-soft px-6 py-16 text-center text-sm text-ink-soft">
+          実績は準備中です。
+        </p>
+      )}
     </div>
   );
 }

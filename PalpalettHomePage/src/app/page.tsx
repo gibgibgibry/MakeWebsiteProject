@@ -1,7 +1,14 @@
 import Link from "next/link";
+import WorkCard from "@/components/WorkCard";
 import { SERVICES } from "@/lib/services";
+import { isMicroCmsConfigured } from "@/lib/microcms/env";
+import { getFeaturedWorks } from "@/lib/microcms/works";
 
-export default function Home() {
+export const revalidate = 3600;
+
+export default async function Home() {
+  const featured = isMicroCmsConfigured() ? await getFeaturedWorks(4) : [];
+
   return (
     <>
       <section className="mx-auto max-w-6xl px-6 pb-20 pt-16 md:px-10 md:pb-28 md:pt-24">
@@ -47,6 +54,36 @@ export default function Home() {
           </p>
         </div>
       </section>
+
+      {featured.length > 0 && (
+        <section
+          aria-labelledby="works-heading"
+          className="mx-auto max-w-6xl px-6 py-20 md:px-10 md:py-28"
+        >
+          <div className="flex items-end justify-between border-b border-line pb-6">
+            <h2
+              id="works-heading"
+              className="font-display text-2xl text-ink md:text-3xl"
+            >
+              実績
+            </h2>
+            <Link
+              href="/works"
+              className="text-sm text-ink-soft hover:text-brand-ink"
+            >
+              すべて見る →
+            </Link>
+          </div>
+
+          <ul className="mt-10 grid grid-cols-2 gap-x-6 gap-y-10 md:grid-cols-4">
+            {featured.map((work, i) => (
+              <li key={work.id}>
+                <WorkCard work={work} preload={i === 0} />
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       <section
         aria-labelledby="services-heading"
