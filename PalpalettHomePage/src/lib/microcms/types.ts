@@ -51,7 +51,7 @@ export type Work = MicroCmsContentMeta & {
   featured?: boolean;
 };
 
-/** 一覧カードの描画に必要な最小限のフィールド。 */
+/** 一覧カードの描画と sitemap に必要な最小限のフィールド。 */
 export type WorkSummary = Pick<
   Work,
   | "id"
@@ -62,4 +62,6 @@ export type WorkSummary = Pick<
   | "year"
   | "featured"
   | "order"
+  // sitemap の lastModified に使う
+  | "updatedAt"
 >;

@@ -22,6 +22,7 @@ const WORK_SUMMARY_FIELDS = [
   "year",
   "featured",
   "order",
+  "updatedAt",
 ].join(",");
 
 /**
