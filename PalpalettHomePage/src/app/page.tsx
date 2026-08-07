@@ -29,7 +29,7 @@ export default function Home() {
           誌面をデザインする。
         </h1>
         <p className="mt-8 max-w-xl text-base leading-loose text-ink-soft">
-          PalPalletは、講談社をはじめとする出版社の雑誌・書籍デザインを手がける
+          Palpalletteは、講談社をはじめとする出版社の雑誌・書籍デザインを手がける
           小さな編集デザインスタジオです。企画の意図を汲み取り、読者に届く誌面を組み立てます。
         </p>
         <div className="mt-10 flex gap-4">

@@ -13,7 +13,8 @@
       "Bash(rm -rf .next test-results tsconfig.tsbuildinfo)",
       "Bash(mkdir -p PalpalettHomePage)",
       "Bash(ls -la ~/.claude/agents/ 2>&1; echo \"---\"; ls -la \"C:\\\\Users\\\\81904\\\\ClaudeProject\\\\Development\\\\MakeWebsiteProject\\\\.claude\\\\agents\" 2>&1)",
-      "Bash(mkdir -p \"C:\\\\Users\\\\81904\\\\ClaudeProject\\\\Development\\\\MakeWebsiteProject\\\\.claude\\\\agents\" && ls \"C:\\\\Users\\\\81904\\\\ClaudeProject\\\\Development\\\\MakeWebsiteProject\\\\.claude\")"
+      "Bash(mkdir -p \"C:\\\\Users\\\\81904\\\\ClaudeProject\\\\Development\\\\MakeWebsiteProject\\\\.claude\\\\agents\" && ls \"C:\\\\Users\\\\81904\\\\ClaudeProject\\\\Development\\\\MakeWebsiteProject\\\\.claude\")",
+      "Bash(cd \"C:\\\\Users\\\\81904\\\\ClaudeProject\\\\Development\\\\MakeWebsiteProject\\\\PalpalettHomePage\" && rm -f src/app/contact/actions.ts src/app/contact/ContactForm.tsx && ls -la src/app/contact/)"
     ]
   }
 }

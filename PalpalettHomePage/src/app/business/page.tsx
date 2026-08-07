@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "事業内容",
-  description: "PalPalletが手がける雑誌・書籍デザインなどの事業内容をご紹介します。",
+  description: "Palpalletteが手がける雑誌・書籍デザインなどの事業内容をご紹介します。",
 };
 
 const SERVICES = [

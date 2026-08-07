@@ -23,7 +23,7 @@ export default function Header() {
           className="font-serif text-xl tracking-wide text-ink"
           onClick={() => setOpen(false)}
         >
-          Pal<span className="text-accent">Pallet</span>
+          Pal<span className="text-accent">pallette</span>
         </Link>
 
         <nav className="hidden gap-8 md:flex">

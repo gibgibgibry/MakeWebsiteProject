@@ -7,9 +7,17 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Project
 
 This repo (`MakeWebsiteProject`) is a workspace root that can hold multiple product sites.
-`PalpalettHomePage/` is the current product: the marketing site for PalPallet, a small editorial
-design studio (magazine/book design for publishers including Kodansha). Content is Japanese.
-Four routes: Home, 会社情報 (Company), 事業内容 (Business), お問い合わせ (Contact).
+`PalpalettHomePage/` is the current product: the marketing site for **Palpallette**
+(有限会社パルパレット), a small design studio founded in 1998, led by 白井秀子. It designs magazine
+covers, comics/book jackets, posters, pamphlets, flyers and logos — largely for Kodansha titles
+(BE・LOVE, 別冊フレンド, なかよし, ちはやふる, カードキャプターさくら, etc.). The brand voice is
+「かわいいデザインや柔らかいデザイン全般、お任せください！」. Content is Japanese.
+
+The legacy site being replaced is https://palpallette.sakura.ne.jp/info/ (WordPress).
+**The name is "Palpallette", never "PalPallet".**
+
+Routes: Home, 実績 (Works, CMS-backed), 事業内容 (Business), 会社情報 (Company),
+お問い合わせ (Contact).
 
 All commands below must be run from inside `PalpalettHomePage/`, not from the workspace root —
 `package.json`, `node_modules`, and all source files live there.
@@ -25,7 +33,7 @@ npm run start          # serve the production build
 npm run lint            # eslint
 npx tsc --noEmit          # typecheck (no dedicated script)
 npm run test:e2e            # run the full Playwright suite
-npx playwright test e2e/navigation.spec.ts -g "contact form"   # run a single test/file
+npx playwright test e2e/navigation.spec.ts -g "contact page"   # run a single test/file
 ```
 
 `test:e2e` builds and starts a production server automatically (see `playwright.config.ts`
@@ -46,16 +54,14 @@ npx playwright test e2e/navigation.spec.ts -g "contact form"   # run a single te
   browser automation against it (this caused Playwright `page.goto` to hang consistently;
   disabling preload fixed it). Browsers already fetch only the chunks a page actually needs via
   `unicode-range`, so `preload: false` is correct here, not just a workaround.
-- Contact form (`PalpalettHomePage/src/app/contact/`) uses a React Server Action (`actions.ts`,
-  `"use server"`) driven by `useActionState` in the client `ContactForm.tsx`, per current Next.js
-  form guidance — not a `/api` route handler. `"use server"` files may only export async
-  functions, so shared constants (e.g. the initial form state) live in the client component
-  instead.
-- Email sending is stubbed (`console.info` only) — wire in a real provider (e.g. Resend) in
-  `PalpalettHomePage/src/app/contact/actions.ts` before launch.
-- `PalpalettHomePage/src/app/company/page.tsx` and `.../contact/page.tsx` contain placeholder
-  company details (address, phone, established date) marked with `◯◯` and a `TODO` comment —
-  replace with real data before launch.
+- **There is no contact form.** It was deliberately removed — `/contact` publishes phone, address
+  and (once decided) an email address as static text. Do not reintroduce a form, a Server Action,
+  or an email provider without being asked. The project currently has no `"use server"` file.
+- The public email address is still undecided; `src/app/contact/page.tsx` holds `EMAIL = null`
+  behind a `TODO`, and the email block renders only once it is set.
+- Real company data (use these, not placeholders): 有限会社パルパレット / 設立 1998年 /
+  代表 白井秀子 / 〒178-0063 東京都練馬区東大泉7-32-6 / Tel Fax 03-4296-4965 /
+  西武池袋線 大泉学園駅 徒歩11分.
 - `PalpalettHomePage/next.config.ts` pins `turbopack.root` explicitly (via `__dirname`) because a
   stray lockfile in the parent user directory otherwise causes Next to misdetect the workspace
   root.

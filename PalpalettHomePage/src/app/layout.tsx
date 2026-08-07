@@ -22,11 +22,11 @@ const shipporiMincho = Shippori_Mincho({
 
 export const metadata: Metadata = {
   title: {
-    default: "PalPallet | 編集デザインスタジオ",
-    template: "%s | PalPallet",
+    default: "Palpallette | デザイン事務所",
+    template: "%s | Palpallette",
   },
   description:
-    "PalPalletは講談社をはじめとする出版社の雑誌・書籍デザインを手がける編集デザインスタジオです。",
+    "有限会社パルパレットは、雑誌・コミックス・書籍の装丁からポスター・パンフレット・チラシ・ロゴまで手がけるデザイン事務所です。かわいいデザイン、柔らかいデザインをお任せください。",
 };
 
 export default function RootLayout({

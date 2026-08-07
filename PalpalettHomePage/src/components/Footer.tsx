@@ -13,10 +13,12 @@ export default function Footer() {
       <div className="mx-auto flex max-w-6xl flex-col gap-8 px-6 py-12 md:flex-row md:items-end md:justify-between md:px-10">
         <div>
           <p className="font-serif text-2xl text-ink">
-            Pal<span className="text-accent">Pallet</span>
+            Pal<span className="text-accent">pallette</span>
           </p>
           <p className="mt-2 max-w-sm text-sm leading-relaxed text-ink-soft">
-            雑誌・書籍のデザインを手がける編集デザインスタジオ。
+            雑誌・コミックス・書籍からロゴまで。
+            <br />
+            かわいいデザイン、柔らかいデザインをお任せください。
           </p>
         </div>
 
@@ -29,7 +31,7 @@ export default function Footer() {
         </nav>
       </div>
       <div className="border-t border-line px-6 py-4 text-xs text-ink-soft md:px-10">
-        &copy; {new Date().getFullYear()} PalPallet
+        &copy; {new Date().getFullYear()} Palpallette
       </div>
     </footer>
   );
