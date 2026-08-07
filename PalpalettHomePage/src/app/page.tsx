@@ -22,8 +22,8 @@ export default function Home() {
   return (
     <>
       <section className="mx-auto max-w-6xl px-6 pb-20 pt-16 md:px-10 md:pb-32 md:pt-24">
-        <p className="text-sm tracking-[0.3em] text-accent">DESIGN STUDIO</p>
-        <h1 className="mt-6 max-w-3xl font-serif text-4xl leading-snug text-ink md:text-6xl md:leading-snug">
+        <p className="text-sm tracking-[0.3em] text-brand-ink">DESIGN STUDIO</p>
+        <h1 className="mt-6 max-w-3xl font-display text-4xl leading-snug text-ink md:text-6xl md:leading-snug">
           編集の現場から、
           <br />
           誌面をデザインする。
@@ -41,7 +41,7 @@ export default function Home() {
           </Link>
           <Link
             href="/contact"
-            className="bg-accent px-6 py-3 text-sm tracking-wide text-paper transition-opacity hover:opacity-90"
+            className="bg-brand-ink px-6 py-3 text-sm tracking-wide text-paper transition-opacity hover:opacity-90"
           >
             お問い合わせ
           </Link>
@@ -51,7 +51,7 @@ export default function Home() {
       <section className="border-y border-line bg-ink py-10 text-paper">
         <div className="mx-auto max-w-6xl px-6 md:px-10">
           <p className="text-xs tracking-[0.3em] text-paper/60">CLIENT</p>
-          <p className="mt-3 font-serif text-2xl md:text-3xl">
+          <p className="mt-3 font-display text-2xl md:text-3xl">
             講談社 <span className="mx-3 text-paper/40">/</span> 出版社各社
           </p>
         </div>
@@ -59,8 +59,8 @@ export default function Home() {
 
       <section className="mx-auto max-w-6xl px-6 py-20 md:px-10 md:py-28">
         <div className="flex items-end justify-between border-b border-line pb-6">
-          <h2 className="font-serif text-2xl text-ink md:text-3xl">事業内容</h2>
-          <Link href="/business" className="text-sm text-ink-soft hover:text-accent">
+          <h2 className="font-display text-2xl text-ink md:text-3xl">事業内容</h2>
+          <Link href="/business" className="text-sm text-ink-soft hover:text-brand-ink">
             すべて見る →
           </Link>
         </div>
@@ -68,7 +68,7 @@ export default function Home() {
         <div className="mt-10 grid gap-10 md:grid-cols-3">
           {SERVICES.map((service) => (
             <div key={service.index}>
-              <p className="font-serif text-3xl text-line">{service.index}</p>
+              <p className="font-display text-3xl text-brand-ui">{service.index}</p>
               <h3 className="mt-3 text-lg text-ink">{service.title}</h3>
               <p className="mt-3 text-sm leading-relaxed text-ink-soft">
                 {service.body}
@@ -80,7 +80,7 @@ export default function Home() {
 
       <section className="border-t border-line">
         <div className="mx-auto flex max-w-6xl flex-col items-start justify-between gap-6 px-6 py-16 md:flex-row md:items-center md:px-10">
-          <h2 className="max-w-md font-serif text-2xl leading-snug text-ink md:text-3xl">
+          <h2 className="max-w-md font-display text-2xl leading-snug text-ink md:text-3xl">
             誌面づくりのご相談、お待ちしています。
           </h2>
           <Link

@@ -3,13 +3,12 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
+import { NAV_ITEMS } from "@/lib/navigation";
 
-const NAV_ITEMS = [
-  { href: "/", label: "Home", index: "01" },
-  { href: "/company", label: "会社情報", index: "02" },
-  { href: "/business", label: "事業内容", index: "03" },
-  { href: "/contact", label: "お問い合わせ", index: "04" },
-];
+function isActive(pathname: string, href: string): boolean {
+  if (href === "/") return pathname === "/";
+  return pathname === href || pathname.startsWith(`${href}/`);
+}
 
 export default function Header() {
   const pathname = usePathname();
@@ -20,26 +19,26 @@ export default function Header() {
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4 md:px-10">
         <Link
           href="/"
-          className="font-serif text-xl tracking-wide text-ink"
+          className="font-display text-xl tracking-wide text-ink"
           onClick={() => setOpen(false)}
         >
-          Pal<span className="text-accent">pallette</span>
+          Pal<span className="text-brand-ink">pallette</span>
         </Link>
 
-        <nav className="hidden gap-8 md:flex">
+        <nav aria-label="メインメニュー" className="hidden gap-8 md:flex">
           {NAV_ITEMS.map((item) => {
-            const active = pathname === item.href;
+            const active = isActive(pathname, item.href);
             return (
               <Link
                 key={item.href}
                 href={item.href}
-                className={`group flex items-baseline gap-2 text-sm tracking-wide transition-colors ${
-                  active ? "text-accent" : "text-ink-soft hover:text-ink"
+                aria-current={active ? "page" : undefined}
+                className={`text-sm tracking-wide transition-colors ${
+                  active
+                    ? "text-brand-ink"
+                    : "text-ink-soft hover:text-brand-ink"
                 }`}
               >
-                <span className="text-[10px] text-line group-hover:text-accent">
-                  {item.index}
-                </span>
                 {item.label}
               </Link>
             );
@@ -48,31 +47,49 @@ export default function Header() {
 
         <button
           type="button"
-          aria-label="メニューを開く"
+          aria-label={open ? "メニューを閉じる" : "メニューを開く"}
           aria-expanded={open}
+          aria-controls="mobile-menu"
           onClick={() => setOpen((v) => !v)}
-          className="flex flex-col gap-1.5 md:hidden"
+          className="flex h-10 w-10 flex-col items-center justify-center gap-1.5 md:hidden"
         >
-          <span className="h-px w-6 bg-ink" />
-          <span className="h-px w-6 bg-ink" />
+          <span
+            aria-hidden="true"
+            className={`h-px w-6 bg-ink transition-transform ${
+              open ? "translate-y-[3.5px] rotate-45" : ""
+            }`}
+          />
+          <span
+            aria-hidden="true"
+            className={`h-px w-6 bg-ink transition-transform ${
+              open ? "-translate-y-[3.5px] -rotate-45" : ""
+            }`}
+          />
         </button>
       </div>
 
       {open && (
-        <nav className="flex flex-col border-t border-line px-6 py-4 md:hidden">
-          {NAV_ITEMS.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              onClick={() => setOpen(false)}
-              className={`flex items-baseline gap-3 py-3 text-sm ${
-                pathname === item.href ? "text-accent" : "text-ink-soft"
-              }`}
-            >
-              <span className="text-[10px] text-line">{item.index}</span>
-              {item.label}
-            </Link>
-          ))}
+        <nav
+          id="mobile-menu"
+          aria-label="メインメニュー"
+          className="flex flex-col border-t border-line px-6 py-2 md:hidden"
+        >
+          {NAV_ITEMS.map((item) => {
+            const active = isActive(pathname, item.href);
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                aria-current={active ? "page" : undefined}
+                onClick={() => setOpen(false)}
+                className={`border-b border-line py-3 text-sm last:border-b-0 ${
+                  active ? "text-brand-ink" : "text-ink-soft"
+                }`}
+              >
+                {item.label}
+              </Link>
+            );
+          })}
         </nav>
       )}
     </header>

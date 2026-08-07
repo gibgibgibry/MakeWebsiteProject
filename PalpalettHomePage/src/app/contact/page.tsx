@@ -49,8 +49,8 @@ const STEPS = [
 export default function ContactPage() {
   return (
     <div className="mx-auto max-w-6xl px-6 py-16 md:px-10 md:py-24">
-      <p className="text-sm tracking-[0.3em] text-accent">CONTACT</p>
-      <h1 className="mt-4 font-serif text-3xl text-ink md:text-5xl">
+      <p className="text-sm tracking-[0.3em] text-brand-ink">CONTACT</p>
+      <h1 className="mt-4 font-display text-3xl text-ink md:text-5xl">
         お問い合わせ
       </h1>
       <p className="mt-6 max-w-xl text-sm leading-loose text-ink-soft">
@@ -60,14 +60,14 @@ export default function ContactPage() {
 
       <div className="mt-14 grid gap-14 md:grid-cols-[1fr_22rem]">
         <div>
-          <h2 className="font-serif text-xl text-ink">こんなご相談を承ります</h2>
+          <h2 className="font-display text-xl text-ink">こんなご相談を承ります</h2>
           <ul className="mt-6 space-y-3">
             {TOPICS.map((topic) => (
               <li
                 key={topic}
                 className="flex items-baseline gap-3 border-b border-line pb-3 text-sm text-ink"
               >
-                <span aria-hidden="true" className="text-accent">
+                <span aria-hidden="true" className="text-brand-ink">
                   —
                 </span>
                 {topic}
@@ -75,14 +75,14 @@ export default function ContactPage() {
             ))}
           </ul>
 
-          <h2 className="mt-14 font-serif text-xl text-ink">ご依頼の流れ</h2>
+          <h2 className="mt-14 font-display text-xl text-ink">ご依頼の流れ</h2>
           <ol className="mt-6 space-y-6">
             {STEPS.map((step) => (
               <li
                 key={step.index}
                 className="grid grid-cols-[3rem_1fr] gap-4 md:gap-6"
               >
-                <span className="font-serif text-2xl text-line">
+                <span className="font-display text-2xl text-brand-ui">
                   {step.index}
                 </span>
                 <div>
@@ -101,7 +101,7 @@ export default function ContactPage() {
 
           <p className="text-ink">お電話・FAX</p>
           <p className="mt-1">
-            <a href={`tel:${TEL_FAX.replace(/-/g, "")}`} className="hover:text-accent">
+            <a href={`tel:${TEL_FAX.replace(/-/g, "")}`} className="hover:text-brand-ink">
               {TEL_FAX}
             </a>
           </p>
@@ -110,7 +110,7 @@ export default function ContactPage() {
             <>
               <p className="mt-8 text-ink">メール</p>
               <p className="mt-1">
-                <a href={`mailto:${EMAIL}`} className="hover:text-accent">
+                <a href={`mailto:${EMAIL}`} className="hover:text-brand-ink">
                   {EMAIL}
                 </a>
               </p>

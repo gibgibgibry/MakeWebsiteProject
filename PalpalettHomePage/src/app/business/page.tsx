@@ -31,8 +31,8 @@ const SERVICES = [
 export default function BusinessPage() {
   return (
     <div className="mx-auto max-w-6xl px-6 py-16 md:px-10 md:py-24">
-      <p className="text-sm tracking-[0.3em] text-accent">BUSINESS</p>
-      <h1 className="mt-4 font-serif text-3xl text-ink md:text-5xl">事業内容</h1>
+      <p className="text-sm tracking-[0.3em] text-brand-ink">BUSINESS</p>
+      <h1 className="mt-4 font-display text-3xl text-ink md:text-5xl">事業内容</h1>
       <p className="mt-6 max-w-xl text-sm leading-loose text-ink-soft">
         講談社をはじめとする出版社の雑誌・書籍のデザインを中心に、
         誌面づくりに関わる制作業務を行っています。
@@ -44,7 +44,7 @@ export default function BusinessPage() {
             key={service.index}
             className="grid grid-cols-1 gap-4 py-10 md:grid-cols-[6rem_1fr] md:gap-10"
           >
-            <p className="font-serif text-4xl text-line">{service.index}</p>
+            <p className="font-display text-4xl text-brand-ui">{service.index}</p>
             <div>
               <h2 className="text-xl text-ink">{service.title}</h2>
               <p className="mt-3 max-w-2xl text-sm leading-relaxed text-ink-soft">

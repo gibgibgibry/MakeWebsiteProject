@@ -20,8 +20,8 @@ const COMPANY_INFO: { label: string; value: string }[] = [
 export default function CompanyPage() {
   return (
     <div className="mx-auto max-w-6xl px-6 py-16 md:px-10 md:py-24">
-      <p className="text-sm tracking-[0.3em] text-accent">COMPANY</p>
-      <h1 className="mt-4 font-serif text-3xl text-ink md:text-5xl">会社情報</h1>
+      <p className="text-sm tracking-[0.3em] text-brand-ink">COMPANY</p>
+      <h1 className="mt-4 font-display text-3xl text-ink md:text-5xl">会社情報</h1>
       <p className="mt-6 max-w-xl text-sm leading-loose text-ink-soft">
         Palpalletteは、出版社の雑誌・書籍づくりに伴走する編集デザインスタジオです。
         企画から誌面が完成するまで、編集部の一員のような距離感でデザインを担当します。
