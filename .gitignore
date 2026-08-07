@@ -1,0 +1,28 @@
+# dependencies / build output (product-level .gitignore も併用)
+node_modules/
+.next/
+out/
+build/
+
+# testing
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
+
+# env files
+.env*
+
+# typescript
+*.tsbuildinfo
+
+# vercel
+.vercel
+
+# ツールが生成した一時ファイル
+.playwright-mcp/
+example-com.png
+
+# OS
+.DS_Store
+Thumbs.db

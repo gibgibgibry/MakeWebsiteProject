@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__playwright__browser_navigate",
+      "Bash(npm -v)",
+      "Bash(npm run *)",
+      "Bash(npx tsc *)",
+      "Bash(npm install *)",
+      "Bash(npx playwright *)",
+      "Bash(grep -o '<link[^>]*>' /tmp/home.html | head -20)",
+      "Bash(curl -s -o /c/Users/81904/AppData/Local/Temp/claude/C--Users-81904-ClaudeProject-Development-MakeWebsiteProject/07db8dfc-44c0-4522-bc48-b40fd50909e9/scratchpad/home.html -w \"HTTP %{http_code}\\\\n\" http://localhost:3000/)",
+      "Bash(F=\"/c/Users/81904/AppData/Local/Temp/claude/C--Users-81904-ClaudeProject-Development-MakeWebsiteProject/07db8dfc-44c0-4522-bc48-b40fd50909e9/scratchpad/home.html\" *)",
+      "Bash(rm -rf .next test-results tsconfig.tsbuildinfo)",
+      "Bash(mkdir -p PalpalettHomePage)",
+      "Bash(ls -la ~/.claude/agents/ 2>&1; echo \"---\"; ls -la \"C:\\\\Users\\\\81904\\\\ClaudeProject\\\\Development\\\\MakeWebsiteProject\\\\.claude\\\\agents\" 2>&1)",
+      "Bash(mkdir -p \"C:\\\\Users\\\\81904\\\\ClaudeProject\\\\Development\\\\MakeWebsiteProject\\\\.claude\\\\agents\" && ls \"C:\\\\Users\\\\81904\\\\ClaudeProject\\\\Development\\\\MakeWebsiteProject\\\\.claude\")"
+    ]
+  }
+}
