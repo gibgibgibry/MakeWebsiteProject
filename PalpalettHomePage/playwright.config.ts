@@ -40,7 +40,26 @@ export default defineConfig({
   ],
   projects: [
     {
+      // webServer を再利用すると前回実行の状態（追加した作品やキャッシュ）が
+      // 残るため、毎回ここで既知の状態に戻してから始める。
+      name: "setup",
+      testMatch: /reset\.setup\.ts/,
+      use: { ...devices["Desktop Chrome"] },
+    },
+    {
       name: "chromium",
+      use: { ...devices["Desktop Chrome"] },
+      testIgnore: /revalidate\.spec\.ts/,
+      dependencies: ["setup"],
+    },
+    {
+      // 再検証テストはモックとキャッシュの共有状態を書き換えるため、
+      // 他テストと並行させると原因不明のフレークになる。
+      // 依存関係で chromium の完了後に、直列で単独実行する。
+      name: "revalidate",
+      testMatch: /revalidate\.spec\.ts/,
+      dependencies: ["chromium"],
+      fullyParallel: false,
       use: { ...devices["Desktop Chrome"] },
     },
   ],
