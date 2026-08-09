@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>実績 | Palpallette（POC）</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<style type="text/tailwindcss">
+  @theme {
+    --color-paper: #ffffff;
+    --color-paper-soft: #fdf5fb;
+    --color-ink: #1c1418;
+    --color-ink-soft: #625660;
+    --color-line: #ece3e9;
+    --color-line-strong: #8a7a86;
+    --color-brand: #ff80ff;
+    --color-brand-ui: #e0439f;
+    --color-brand-ink: #c2187f;
+    --color-brand-wash: #ffeafd;
+    --color-brand-wash-15: #ffecff;
+    --font-sans: 'Noto Sans JP', 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif;
+    --font-display: 'Zen Maru Gothic', 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif;
+    --radius-card: 1.25rem;
+  }
+</style>
+<style>
+  :focus-visible { outline: 2px solid var(--color-brand-ui); outline-offset: 2px; border-radius: 2px; }
+  dialog::backdrop { background: rgba(28,20,24,.8); }
+</style>
+</head>
+<body class="flex min-h-screen flex-col bg-brand-wash-15 font-sans text-ink antialiased">
+
+<header class="sticky top-0 z-50 border-b border-line bg-paper">
+  <div class="mx-auto flex max-w-6xl items-center justify-between px-6 py-3 md:px-10">
+    <a href="index.html" class="block shrink-0">
+      <img src="../public/palpallette_Mainlogo.png" alt="Palpallette" class="h-11 w-auto md:h-14">
+    </a>
+    <nav aria-label="メインメニュー" class="hidden gap-8 md:flex">
+      <a href="index.html" class="text-sm tracking-wide text-ink-soft hover:text-brand-ink">ホーム</a>
+      <a href="works.html" aria-current="page" class="text-sm tracking-wide text-brand-ink">実績</a>
+      <a href="business.html" class="text-sm tracking-wide text-ink-soft hover:text-brand-ink">事業内容</a>
+      <a href="company.html" class="text-sm tracking-wide text-ink-soft hover:text-brand-ink">会社情報</a>
+      <a href="contact.html" class="text-sm tracking-wide text-ink-soft hover:text-brand-ink">お問い合わせ</a>
+    </nav>
+    <button type="button" onclick="document.getElementById('mobile-menu').classList.toggle('hidden'); this.setAttribute('aria-expanded', this.getAttribute('aria-expanded')==='true'?'false':'true')"
+      aria-label="メニューを開く" aria-expanded="false" aria-controls="mobile-menu"
+      class="flex h-10 w-10 flex-col items-center justify-center gap-1.5 md:hidden">
+      <span class="h-px w-6 bg-ink"></span>
+      <span class="h-px w-6 bg-ink"></span>
+    </button>
+  </div>
+  <nav id="mobile-menu" aria-label="メインメニュー" class="hidden flex-col border-t border-line px-6 py-2 md:hidden">
+    <a href="index.html" class="border-b border-line py-3 text-sm text-ink-soft">ホーム</a>
+    <a href="works.html" class="border-b border-line py-3 text-sm text-brand-ink">実績</a>
+    <a href="business.html" class="border-b border-line py-3 text-sm text-ink-soft">事業内容</a>
+    <a href="company.html" class="border-b border-line py-3 text-sm text-ink-soft">会社情報</a>
+    <a href="contact.html" class="py-3 text-sm text-ink-soft">お問い合わせ</a>
+  </nav>
+</header>
+
+<main class="flex-1">
+
+  <div class="bg-brand-ink">
+    <div class="mx-auto max-w-6xl px-6 py-6 md:px-10">
+      <span class="inline-block rounded-full bg-white/15 px-4 py-1.5 text-xs tracking-[0.25em] text-white">WORKS</span>
+      <h1 class="mt-3 font-display text-3xl text-white md:text-5xl">実績</h1>
+    </div>
+  </div>
+
+  <div class="mx-auto max-w-6xl px-6 py-12 md:px-10 md:py-16">
+    <p class="max-w-xl text-sm leading-loose text-ink-soft">
+      雑誌の表紙、コミックス・書籍の装丁、ポスターやロゴなど、これまでに手がけた仕事をご紹介します。
+    </p>
+
+    <!-- カテゴリー絞り込み（見た目確認用の簡易デモ） -->
+    <div role="group" aria-label="カテゴリーで絞り込む" class="mt-8 flex flex-wrap gap-2">
+      <button type="button" data-filter="all" onclick="filterWorks('all', this)"
+        class="filter-btn rounded-full border border-brand-ink bg-brand-ink px-4 py-1.5 text-sm text-white transition-colors">すべて</button>
+      <button type="button" data-filter="magazine" onclick="filterWorks('magazine', this)"
+        class="filter-btn rounded-full border border-line-strong px-4 py-1.5 text-sm text-ink-soft transition-colors hover:border-brand-ui hover:text-brand-ink">雑誌</button>
+      <button type="button" data-filter="comics" onclick="filterWorks('comics', this)"
+        class="filter-btn rounded-full border border-line-strong px-4 py-1.5 text-sm text-ink-soft transition-colors hover:border-brand-ui hover:text-brand-ink">コミックス・書籍</button>
+      <button type="button" data-filter="poster" onclick="filterWorks('poster', this)"
+        class="filter-btn rounded-full border border-line-strong px-4 py-1.5 text-sm text-ink-soft transition-colors hover:border-brand-ui hover:text-brand-ink">ポスター・チラシ</button>
+    </div>
+
+    <ul id="works-grid" class="mt-10 grid grid-cols-2 gap-x-6 gap-y-10 md:grid-cols-4">
+      <li data-category="magazine">
+        <button type="button" onclick="openLightbox('BE・LOVE 2025年4月号 表紙')" class="block w-full text-left">
+          <div class="aspect-[3/4] rounded-card border border-line bg-gradient-to-br from-brand-wash to-paper-soft flex items-center justify-center text-xs text-brand-ink transition-colors hover:border-brand-ui">作品画像</div>
+        </button>
+        <span class="mt-3 inline-block rounded-full bg-brand-wash px-3 py-1 text-xs text-brand-ink">雑誌</span>
+        <h3 class="mt-2 font-display text-sm text-ink">BE・LOVE 2025年4月号 表紙</h3>
+        <p class="mt-1 text-xs text-ink-soft">講談社『BE・LOVE』 / 2025年</p>
+      </li>
+      <li data-category="comics">
+        <button type="button" onclick="openLightbox('ちはやふる 公式コミックガイド')" class="block w-full text-left">
+          <div class="aspect-[3/4] rounded-card border border-line bg-gradient-to-br from-brand-wash to-paper-soft flex items-center justify-center text-xs text-brand-ink transition-colors hover:border-brand-ui">作品画像</div>
+        </button>
+        <span class="mt-3 inline-block rounded-full bg-brand-wash px-3 py-1 text-xs text-brand-ink">コミックス・書籍</span>
+        <h3 class="mt-2 font-display text-sm text-ink">ちはやふる 公式コミックガイド</h3>
+        <p class="mt-1 text-xs text-ink-soft">講談社 / 2019年</p>
+      </li>
+      <li data-category="poster">
+        <button type="button" onclick="openLightbox('マグカル・パフォーミング・アカデミー募集要項')" class="block w-full text-left">
+          <div class="aspect-[3/4] rounded-card border border-line bg-gradient-to-br from-brand-wash to-paper-soft flex items-center justify-center text-xs text-brand-ink transition-colors hover:border-brand-ui">作品画像</div>
+        </button>
+        <span class="mt-3 inline-block rounded-full bg-brand-wash px-3 py-1 text-xs text-brand-ink">ポスター・チラシ</span>
+        <h3 class="mt-2 font-display text-sm text-ink">マグカル・パフォーミング・アカデミー募集要項</h3>
+        <p class="mt-1 text-xs text-ink-soft">2018年</p>
+      </li>
+      <li data-category="magazine">
+        <button type="button" onclick="openLightbox('別冊フレンド 表紙')" class="block w-full text-left">
+          <div class="aspect-[3/4] rounded-card border border-line bg-gradient-to-br from-brand-wash to-paper-soft flex items-center justify-center text-xs text-brand-ink transition-colors hover:border-brand-ui">作品画像</div>
+        </button>
+        <span class="mt-3 inline-block rounded-full bg-brand-wash px-3 py-1 text-xs text-brand-ink">雑誌</span>
+        <h3 class="mt-2 font-display text-sm text-ink">別冊フレンド 表紙</h3>
+        <p class="mt-1 text-xs text-ink-soft">講談社『別冊フレンド』 / 2019年</p>
+      </li>
+      <li data-category="comics">
+        <button type="button" onclick="openLightbox('社畜フランケン 1〜2巻')" class="block w-full text-left">
+          <div class="aspect-[3/4] rounded-card border border-line bg-gradient-to-br from-brand-wash to-paper-soft flex items-center justify-center text-xs text-brand-ink transition-colors hover:border-brand-ui">作品画像</div>
+        </button>
+        <span class="mt-3 inline-block rounded-full bg-brand-wash px-3 py-1 text-xs text-brand-ink">コミックス・書籍</span>
+        <h3 class="mt-2 font-display text-sm text-ink">社畜フランケン 1〜2巻</h3>
+        <p class="mt-1 text-xs text-ink-soft">2019年</p>
+      </li>
+      <li data-category="magazine">
+        <button type="button" onclick="openLightbox('なかよし4月号ふろく ペンケース')" class="block w-full text-left">
+          <div class="aspect-[3/4] rounded-card border border-line bg-gradient-to-br from-brand-wash to-paper-soft flex items-center justify-center text-xs text-brand-ink transition-colors hover:border-brand-ui">作品画像</div>
+        </button>
+        <span class="mt-3 inline-block rounded-full bg-brand-wash px-3 py-1 text-xs text-brand-ink">雑誌</span>
+        <h3 class="mt-2 font-display text-sm text-ink">なかよし4月号ふろく ペンケース</h3>
+        <p class="mt-1 text-xs text-ink-soft">講談社『なかよし』 / 2019年</p>
+      </li>
+      <li data-category="poster">
+        <button type="button" onclick="openLightbox('バイトショウ BEST盤 チラシ')" class="block w-full text-left">
+          <div class="aspect-[3/4] rounded-card border border-line bg-gradient-to-br from-brand-wash to-paper-soft flex items-center justify-center text-xs text-brand-ink transition-colors hover:border-brand-ui">作品画像</div>
+        </button>
+        <span class="mt-3 inline-block rounded-full bg-brand-wash px-3 py-1 text-xs text-brand-ink">ポスター・チラシ</span>
+        <h3 class="mt-2 font-display text-sm text-ink">バイトショウ BEST盤 チラシ</h3>
+        <p class="mt-1 text-xs text-ink-soft">2018年</p>
+      </li>
+      <li data-category="comics">
+        <button type="button" onclick="openLightbox('カードキャプターさくら展 公式図録')" class="block w-full text-left">
+          <div class="aspect-[3/4] rounded-card border border-line bg-gradient-to-br from-brand-wash to-paper-soft flex items-center justify-center text-xs text-brand-ink transition-colors hover:border-brand-ui">作品画像</div>
+        </button>
+        <span class="mt-3 inline-block rounded-full bg-brand-wash px-3 py-1 text-xs text-brand-ink">コミックス・書籍</span>
+        <h3 class="mt-2 font-display text-sm text-ink">カードキャプターさくら展 公式図録</h3>
+        <p class="mt-1 text-xs text-ink-soft">2019年</p>
+      </li>
+    </ul>
+
+    <p id="empty-state" class="mt-16 hidden rounded-card border border-line bg-paper px-6 py-16 text-center text-sm text-ink-soft">
+      該当する実績がありません。
+    </p>
+  </div>
+
+</main>
+
+<footer class="mt-auto border-t border-line bg-paper">
+  <div class="mx-auto flex max-w-6xl flex-col gap-8 px-6 py-12 md:flex-row md:items-end md:justify-between md:px-10">
+    <div>
+      <img src="../public/palpalletteNameOnlylogo.jpeg" alt="Palpallette" class="h-8 w-auto">
+      <p class="mt-3 max-w-sm text-sm leading-relaxed text-ink-soft">
+        雑誌・コミックス・書籍からロゴまで。<br>かわいいデザイン、柔らかいデザインをお任せください。
+      </p>
+    </div>
+    <nav aria-label="フッターメニュー" class="flex flex-wrap gap-x-6 gap-y-2 text-sm text-ink-soft">
+      <a href="index.html" class="hover:text-brand-ink">ホーム</a>
+      <a href="works.html" class="hover:text-brand-ink">実績</a>
+      <a href="business.html" class="hover:text-brand-ink">事業内容</a>
+      <a href="company.html" class="hover:text-brand-ink">会社情報</a>
+      <a href="contact.html" class="hover:text-brand-ink">お問い合わせ</a>
+    </nav>
+  </div>
+  <div class="border-t border-line px-6 py-4 text-xs text-ink-soft md:px-10">&copy; 2026 Palpallette</div>
+</footer>
+
+<!-- ライトボックス（見た目確認用の簡易版。実データはまだ無いためプレースホルダーを拡大表示するのみ） -->
+<dialog id="lightbox" class="m-auto max-h-[100dvh] max-w-[100vw] rounded-2xl bg-transparent p-0" onclick="if(event.target===this) this.close()">
+  <div class="flex max-h-[100dvh] flex-col items-center gap-3 p-4">
+    <div class="flex w-full items-center justify-between gap-4 text-white">
+      <p id="lightbox-title" class="text-sm"></p>
+      <button type="button" onclick="document.getElementById('lightbox').close()" aria-label="閉じる" class="rounded-full border border-white/40 px-4 py-1.5 text-xs text-white hover:bg-white hover:text-ink">閉じる</button>
+    </div>
+    <div class="flex h-[70dvh] w-[80vw] max-w-2xl items-center justify-center rounded-2xl bg-gradient-to-br from-brand-wash to-paper-soft text-brand-ink">作品画像（拡大）</div>
+  </div>
+</dialog>
+
+<script>
+  function filterWorks(category, btn) {
+    document.querySelectorAll('.filter-btn').forEach(b => {
+      b.classList.remove('bg-brand-ink', 'text-white', 'border-brand-ink');
+      b.classList.add('border-line-strong', 'text-ink-soft');
+    });
+    btn.classList.add('bg-brand-ink', 'text-white', 'border-brand-ink');
+    btn.classList.remove('border-line-strong', 'text-ink-soft');
+
+    let visible = 0;
+    document.querySelectorAll('#works-grid > li').forEach(li => {
+      const show = category === 'all' || li.dataset.category === category;
+      li.classList.toggle('hidden', !show);
+      if (show) visible++;
+    });
+    document.getElementById('empty-state').classList.toggle('hidden', visible > 0);
+  }
+
+  function openLightbox(title) {
+    document.getElementById('lightbox-title').textContent = title;
+    document.getElementById('lightbox').showModal();
+  }
+</script>
+
+</body>
+</html>
