@@ -8,26 +8,34 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
 <script src="https://cdn.tailwindcss.com"></script>
-<style type="text/tailwindcss">
-  @theme {
-    --color-paper: #ffffff;
-    --color-paper-soft: #fdf5fb;
-    --color-ink: #1c1418;
-    --color-ink-soft: #625660;
-    --color-line: #ece3e9;
-    --color-line-strong: #8a7a86;
-    --color-brand: #ff80ff;
-    --color-brand-ui: #e0439f;
-    --color-brand-ink: #c2187f;
-    --color-brand-wash: #ffeafd;
-    --color-brand-wash-15: #ffecff;
-    --font-sans: 'Noto Sans JP', 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif;
-    --font-display: 'Zen Maru Gothic', 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif;
-    --radius-card: 1.25rem;
-  }
-</style>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          paper: '#ffffff',
+          'paper-soft': '#fdf5fb',
+          ink: '#1c1418',
+          'ink-soft': '#625660',
+          line: '#ece3e9',
+          'line-strong': '#8a7a86',
+          brand: '#ff80ff',
+          'brand-ui': '#e0439f',
+          'brand-ink': '#c2187f',
+          'brand-wash': '#ffeafd',
+          'brand-wash-15': '#ffecff',
+        },
+        fontFamily: {
+          sans: ["'Noto Sans JP'", "'Hiragino Sans'", "'Hiragino Kaku Gothic ProN'", 'Meiryo', 'sans-serif'],
+          display: ["'Zen Maru Gothic'", "'Hiragino Sans'", "'Hiragino Kaku Gothic ProN'", 'Meiryo', 'sans-serif'],
+        },
+        borderRadius: { card: '1.25rem' },
+      },
+    },
+  };
+</script>
 <style>
-  :focus-visible { outline: 2px solid var(--color-brand-ui); outline-offset: 2px; border-radius: 2px; }
+  :focus-visible { outline: 2px solid #e0439f; outline-offset: 2px; border-radius: 2px; }
 </style>
 </head>
 <body class="flex min-h-screen flex-col bg-brand-wash-15 font-sans text-ink antialiased">
@@ -60,67 +68,97 @@
   </nav>
 </header>
 
+<div class="bg-brand-ink">
+  <div class="mx-auto max-w-6xl px-6 py-6 md:px-10">
+    <span class="inline-block rounded-full bg-white/15 px-4 py-1.5 text-xs tracking-[0.25em] text-white">BUSINESS</span>
+    <h1 class="mt-3 font-display text-3xl text-white md:text-5xl">事業内容</h1>
+  </div>
+</div>
+
 <main class="flex-1">
-
-  <div class="bg-brand-ink">
-    <div class="mx-auto max-w-6xl px-6 py-6 md:px-10">
-      <span class="inline-block rounded-full bg-white/15 px-4 py-1.5 text-xs tracking-[0.25em] text-white">BUSINESS</span>
-      <h1 class="mt-3 font-display text-3xl text-white md:text-5xl">事業内容</h1>
-    </div>
-  </div>
-
   <div class="mx-auto max-w-6xl px-6 py-12 md:px-10 md:py-16">
-    <p class="max-w-xl text-sm leading-loose text-ink-soft">
-      出版社の雑誌・コミックスを中心に、紙面まわりのデザインを幅広く手がけています。
-      かわいいデザイン、柔らかいデザイン全般、お任せください。
-    </p>
+    <div class="flex flex-col gap-12 md:flex-row md:items-start">
 
-    <div class="mt-10 space-y-6">
-      <article class="grid grid-cols-1 gap-4 rounded-card border border-line bg-paper p-6 md:grid-cols-[6rem_1fr] md:gap-8 md:p-8">
-        <p class="font-display text-4xl text-brand-ui">01</p>
-        <div>
-          <h2 class="font-display text-xl text-ink">雑誌デザイン</h2>
-          <p class="mt-3 max-w-2xl text-sm leading-loose text-ink-soft">表紙まわりから特集ページ、連載ページのフォーマット設計まで、雑誌一冊を通した誌面デザインを担当します。月刊誌の継続的な進行にも対応します。</p>
-          <p class="mt-4 inline-block rounded-full bg-brand-wash px-4 py-1.5 text-xs text-brand-ink">BE・LOVE / 別冊フレンド / なかよし / デザート ほか</p>
+      <div class="min-w-0 flex-1">
+        <p class="text-sm leading-loose text-ink-soft">
+          出版社の雑誌・コミックスを中心に、紙面まわりのデザインを幅広く手がけています。
+          かわいいデザイン、柔らかいデザイン全般、お任せください。
+        </p>
+
+        <div class="mt-10 space-y-6">
+          <article class="grid grid-cols-1 gap-4 rounded-card border border-line bg-paper p-6 md:grid-cols-[6rem_1fr] md:gap-8">
+            <p class="font-display text-4xl text-brand-ui">01</p>
+            <div>
+              <h2 class="font-display text-xl text-ink">雑誌デザイン</h2>
+              <p class="mt-3 max-w-2xl text-sm leading-loose text-ink-soft">表紙まわりから特集ページ、連載ページのフォーマット設計まで、雑誌一冊を通した誌面デザインを担当します。月刊誌の継続的な進行にも対応します。</p>
+              <p class="mt-4 inline-block rounded-full bg-brand-wash px-4 py-1.5 text-xs text-brand-ink">BE・LOVE / 別冊フレンド / なかよし / デザート ほか</p>
+            </div>
+          </article>
+
+          <article class="grid grid-cols-1 gap-4 rounded-card border border-line bg-paper p-6 md:grid-cols-[6rem_1fr] md:gap-8">
+            <p class="font-display text-4xl text-brand-ui">02</p>
+            <div>
+              <h2 class="font-display text-xl text-ink">コミックス・書籍の装丁</h2>
+              <p class="mt-3 max-w-2xl text-sm leading-loose text-ink-soft">単行本のカバーデザイン、シリーズを通したフォーマット設計、電子版の合冊カバーまで。作品の空気感を損なわないデザインを心がけています。</p>
+              <p class="mt-4 inline-block rounded-full bg-brand-wash px-4 py-1.5 text-xs text-brand-ink">コミックス単行本 / 公式ガイドブック / 図録 ほか</p>
+            </div>
+          </article>
+
+          <article class="grid grid-cols-1 gap-4 rounded-card border border-line bg-paper p-6 md:grid-cols-[6rem_1fr] md:gap-8">
+            <p class="font-display text-4xl text-brand-ui">03</p>
+            <div>
+              <h2 class="font-display text-xl text-ink">ポスター・パンフレット・チラシ</h2>
+              <p class="mt-3 max-w-2xl text-sm leading-loose text-ink-soft">イベントや商品の告知物を制作します。限られた情報量のなかで、伝えたいことがまっすぐ届く紙面を設計します。</p>
+              <p class="mt-4 inline-block rounded-full bg-brand-wash px-4 py-1.5 text-xs text-brand-ink">イベント告知 / 募集要項 / 販促チラシ ほか</p>
+            </div>
+          </article>
+
+          <article class="grid grid-cols-1 gap-4 rounded-card border border-line bg-paper p-6 md:grid-cols-[6rem_1fr] md:gap-8">
+            <p class="font-display text-4xl text-brand-ui">04</p>
+            <div>
+              <h2 class="font-display text-xl text-ink">ロゴ・グッズデザイン</h2>
+              <p class="mt-3 max-w-2xl text-sm leading-loose text-ink-soft">作品ロゴやタイトルロゴのデザイン、雑誌付録やイベントグッズのデザインまで幅広く対応します。</p>
+              <p class="mt-4 inline-block rounded-full bg-brand-wash px-4 py-1.5 text-xs text-brand-ink">タイトルロゴ / 雑誌付録 / かるた・カード類 ほか</p>
+            </div>
+          </article>
         </div>
-      </article>
 
-      <article class="grid grid-cols-1 gap-4 rounded-card border border-line bg-paper p-6 md:grid-cols-[6rem_1fr] md:gap-8 md:p-8">
-        <p class="font-display text-4xl text-brand-ui">02</p>
-        <div>
-          <h2 class="font-display text-xl text-ink">コミックス・書籍の装丁</h2>
-          <p class="mt-3 max-w-2xl text-sm leading-loose text-ink-soft">単行本のカバーデザイン、シリーズを通したフォーマット設計、電子版の合冊カバーまで。作品の空気感を損なわないデザインを心がけています。</p>
-          <p class="mt-4 inline-block rounded-full bg-brand-wash px-4 py-1.5 text-xs text-brand-ink">コミックス単行本 / 公式ガイドブック / 図録 ほか</p>
+        <div class="mt-14 flex flex-col items-start gap-6 rounded-card bg-brand-ink px-6 py-10 md:flex-row md:items-center md:justify-between">
+          <p class="max-w-md font-display text-xl leading-relaxed text-white">手がけた仕事は、実績ページでご覧いただけます。</p>
+          <a href="works.html" class="rounded-full bg-white px-7 py-3 text-sm tracking-wide text-brand-ink transition-opacity hover:opacity-90">実績を見る</a>
         </div>
-      </article>
+      </div>
 
-      <article class="grid grid-cols-1 gap-4 rounded-card border border-line bg-paper p-6 md:grid-cols-[6rem_1fr] md:gap-8 md:p-8">
-        <p class="font-display text-4xl text-brand-ui">03</p>
+      <aside class="w-full shrink-0 space-y-10 md:w-72">
         <div>
-          <h2 class="font-display text-xl text-ink">ポスター・パンフレット・チラシ</h2>
-          <p class="mt-3 max-w-2xl text-sm leading-loose text-ink-soft">イベントや商品の告知物を制作します。限られた情報量のなかで、伝えたいことがまっすぐ届く紙面を設計します。</p>
-          <p class="mt-4 inline-block rounded-full bg-brand-wash px-4 py-1.5 text-xs text-brand-ink">イベント告知 / 募集要項 / 販促チラシ ほか</p>
+          <h2 class="border-b-2 border-brand-ink pb-2 font-display text-sm tracking-wide text-ink">最近の実績</h2>
+          <ul class="mt-4 space-y-3 text-sm">
+            <li><a href="works.html" class="text-ink-soft hover:text-brand-ink">BE・LOVE 2025年4月号 表紙</a></li>
+            <li><a href="works.html" class="text-ink-soft hover:text-brand-ink">ちはやふる 公式コミックガイド</a></li>
+            <li><a href="works.html" class="text-ink-soft hover:text-brand-ink">マグカル募集要項チラシ</a></li>
+            <li><a href="works.html" class="text-ink-soft hover:text-brand-ink">別冊フレンド 表紙</a></li>
+            <li><a href="works.html" class="text-ink-soft hover:text-brand-ink">社畜フランケン 1〜2巻</a></li>
+          </ul>
         </div>
-      </article>
-
-      <article class="grid grid-cols-1 gap-4 rounded-card border border-line bg-paper p-6 md:grid-cols-[6rem_1fr] md:gap-8 md:p-8">
-        <p class="font-display text-4xl text-brand-ui">04</p>
         <div>
-          <h2 class="font-display text-xl text-ink">ロゴ・グッズデザイン</h2>
-          <p class="mt-3 max-w-2xl text-sm leading-loose text-ink-soft">作品ロゴやタイトルロゴのデザイン、雑誌付録やイベントグッズのデザインまで幅広く対応します。</p>
-          <p class="mt-4 inline-block rounded-full bg-brand-wash px-4 py-1.5 text-xs text-brand-ink">タイトルロゴ / 雑誌付録 / かるた・カード類 ほか</p>
+          <h2 class="border-b-2 border-brand-ink pb-2 font-display text-sm tracking-wide text-ink">カテゴリー</h2>
+          <ul class="mt-4 space-y-3 text-sm">
+            <li><a href="works.html" class="text-ink-soft hover:text-brand-ink">雑誌</a></li>
+            <li><a href="works.html" class="text-ink-soft hover:text-brand-ink">コミックス・書籍</a></li>
+            <li><a href="works.html" class="text-ink-soft hover:text-brand-ink">ポスター・チラシ</a></li>
+          </ul>
         </div>
-      </article>
-    </div>
-
-    <div class="mt-14 flex flex-col items-start gap-6 rounded-card bg-brand-ink px-6 py-10 md:flex-row md:items-center md:justify-between md:px-10">
-      <p class="max-w-md font-display text-xl leading-relaxed text-white md:text-2xl">
-        手がけた仕事は、実績ページでご覧いただけます。
-      </p>
-      <a href="works.html" class="rounded-full bg-white px-7 py-3 text-sm tracking-wide text-brand-ink transition-opacity hover:opacity-90">実績を見る</a>
+        <div>
+          <h2 class="border-b-2 border-brand-ink pb-2 font-display text-sm tracking-wide text-ink">検索</h2>
+          <form class="mt-4 flex" onsubmit="return false">
+            <label for="search" class="sr-only">検索キーワード</label>
+            <input id="search" type="search" placeholder="キーワード" class="w-full rounded-l-full border border-line-strong bg-paper px-4 py-2 text-sm">
+            <button type="submit" class="rounded-r-full bg-brand-ink px-4 text-sm text-white">検索</button>
+          </form>
+        </div>
+      </aside>
     </div>
   </div>
-
 </main>
 
 <footer class="mt-auto border-t border-line bg-paper">

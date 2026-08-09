@@ -5,30 +5,50 @@ Next.js本体（`src/`）とは完全に独立した、レイアウト・配色�
 
 ```
 design-poc/
-  index.html      Home
-  works.html      実績（カテゴリー絞り込み・画像拡大のデモ動作つき）
+  index.html      Home（実績フィード＋サイドバー）
+  works.html      実績一覧（カテゴリー絞り込み・画像拡大のデモ動作つき）
   business.html   事業内容
   company.html    会社情報
   contact.html    お問い合わせ
 ```
 
-## 今回反映した要望
+## レイアウトの下敷き
+
+旧サイト（https://palpallette.sakura.ne.jp/info/ ）の構造をベースにしている。
+
+- **ホーム＝実績（ブログ）フィードを主役にする。** 旧サイトはホームがそのまま
+  作品投稿の一覧だったため、各ページとも「メインコンテンツ＋サイドバー」の
+  2カラム構成にした。
+- **サイドバー**（最近の実績／カテゴリー／検索）を全ページ共通で設置。
+  旧サイトの「最近の投稿／カテゴリー／検索」ウィジェットに対応する。
+
+## 反映した要望
 
 1. **背景を薄いピンクに。** ブランドピンク `#ff80ff` を白と15%で混色した
-   `#ffecff` をページ全体の背景に使用（`--color-brand-wash-15`）。
+   `#ffecff` をページ全体の背景に使用（`brand-wash-15`）。
    ヘッダー・フッターのみ白背景を維持（ロゴ画像が不透明な白背景で
    作られているため、直接ピンク地に置くと白い矩形が浮いて見えるのを回避）。
 2. **見出しを濃いピンクの帯でハイライト。** 各ページのH1、「社名の由来」
-   「会社概要」などのセクション見出し、CLIENT/CTA帯を `#c2187f`
+   「会社概要」などのセクション見出し、CTA帯を `#c2187f`
    （既存の `brand-ink` トークン）の帯＋白抜き文字に。
    白文字 on `brand-ink` は **5.63:1**（実測済み・AA適合）。
 3. **ロゴ画像を反映。** `public/palpallette_Mainlogo.png`（マスコット＋ワードマーク）を
-   ヘッダーとHomeヒーローに、`public/palpalletteNameOnlylogo.jpeg`（文字のみ）を
-   フッターに使用。
+   ヘッダーに、`public/palpalletteNameOnlylogo.jpeg`（文字のみ）をフッターに使用。
+
+## 修正履歴: 背景色が反映されない不具合
+
+初版では `<style type="text/tailwindcss"> @theme {...} </style>` という
+Tailwind v4のCSS設定記法を使っていたが、**このCDNビルドではこの書き方が
+正しく処理されず、カスタムカラーのユーティリティクラス（`bg-brand-ink` 等）が
+一切生成されない**不具合があった（背景だけでなく帯の色なども同様に効いていなかった）。
+
+実際に `window.tailwind.config = {...}`（v3スタイルのJS設定オブジェクト）に
+切り替えて動作することを確認し、全ページをこの方式に修正済み。
+現在は `getComputedStyle` で背景色・帯色とも正しく適用されていることを確認している。
 
 ## 見づらい場合の調整ポイント
 
-- 帯の白抜き文字が見づらい場合 → 各HTMLの `@theme` 内 `--color-brand-ink` の値を
+- 帯の白抜き文字が見づらい場合 → 各HTMLの `tailwind.config` 内 `'brand-ink'` の値を
   1箇所変更すれば全体に反映される。
 - ピンク背景が強すぎる場合 → `body` の `bg-brand-wash-15` を `bg-paper` や
   `bg-brand-wash`（既存のより薄いトークン）に変更。
@@ -37,11 +57,10 @@ design-poc/
 
 ## 技術メモ
 
-- Tailwind CDN（`cdn.tailwindcss.com`）を使用。`src/app/globals.css` の
-  `@theme` と同じトークン名・値を各HTMLの `<style type="text/tailwindcss">` に
-  埋め込んでいるため、`bg-brand-ink` 等のクラス名は本番と同じ。
-  方向性確定後にNext.jsコンポーネントへ移植する際、クラス名の書き換えは
-  ほぼ不要な想定。
+- Tailwind CDN（`cdn.tailwindcss.com`）を使用。`src/app/globals.css` と
+  同じトークン名・値を各HTMLの `tailwind.config`（JS）に設定しているため、
+  `bg-brand-ink` 等のクラス名は本番と同じ。方向性確定後にNext.jsコンポーネントへ
+  移植する際、クラス名の書き換えはほぼ不要な想定。
 - `.html`/`.css` のみで構成し `.ts`/`.tsx`/`.js` ファイルを作っていないため、
   `npm run lint` / `npx tsc --noEmit` の対象外（確認済み）。
 - モバイルメニュー・実績ページのカテゴリー絞り込み・画像拡大表示は、
@@ -50,5 +69,7 @@ design-poc/
 ## ステータス
 
 - [x] 5ページ作成、ロゴ反映、背景・見出し帯の要望反映
+- [x] 旧サイトの構造（実績フィード＋サイドバー）をベースに再構成
+- [x] 背景色が反映されない不具合を修正（Tailwind設定方式の変更）
 - [ ] ステークホルダーフィードバック待ち
 - [ ] Next.js本体への反映（別タスク）
