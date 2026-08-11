@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>会社情報 | Palpallette（POC）</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          paper: '#ffffff',
+          'paper-soft': '#fdf5fb',
+          ink: '#1c1418',
+          'ink-soft': '#625660',
+          line: '#ece3e9',
+          'line-strong': '#8a7a86',
+          brand: '#ff80ff',
+          'brand-ui': '#e0439f',
+          'brand-ink': '#c2187f',
+          'brand-wash': '#ffeafd',
+          'brand-wash-15': '#ffecff',
+        },
+        fontFamily: {
+          sans: ["'Noto Sans JP'", "'Hiragino Sans'", "'Hiragino Kaku Gothic ProN'", 'Meiryo', 'sans-serif'],
+          display: ["'Zen Maru Gothic'", "'Hiragino Sans'", "'Hiragino Kaku Gothic ProN'", 'Meiryo', 'sans-serif'],
+        },
+        borderRadius: { card: '1.25rem' },
+      },
+    },
+  };
+</script>
+<style>
+  :focus-visible { outline: 2px solid #e0439f; outline-offset: 2px; border-radius: 2px; }
+</style>
+</head>
+<body class="flex min-h-screen flex-col bg-brand-wash-15 font-sans text-ink antialiased">
+
+<header class="sticky top-0 z-50 border-b border-line bg-paper">
+  <div class="mx-auto flex max-w-6xl items-center justify-between px-6 py-3 md:px-10">
+    <a href="index.html" class="block shrink-0">
+      <img src="../public/palpallette_Mainlogo.png" alt="Palpallette" class="h-11 w-auto md:h-14">
+    </a>
+    <nav aria-label="メインメニュー" class="hidden gap-8 md:flex">
+      <a href="index.html" class="text-sm tracking-wide text-ink-soft hover:text-brand-ink">ホーム</a>
+      <a href="works.html" class="text-sm tracking-wide text-ink-soft hover:text-brand-ink">実績</a>
+      <a href="business.html" class="text-sm tracking-wide text-ink-soft hover:text-brand-ink">事業内容</a>
+      <a href="company.html" aria-current="page" class="text-sm tracking-wide text-brand-ink">会社情報</a>
+      <a href="contact.html" class="text-sm tracking-wide text-ink-soft hover:text-brand-ink">お問い合わせ</a>
+    </nav>
+    <button type="button" onclick="document.getElementById('mobile-menu').classList.toggle('hidden'); this.setAttribute('aria-expanded', this.getAttribute('aria-expanded')==='true'?'false':'true')"
+      aria-label="メニューを開く" aria-expanded="false" aria-controls="mobile-menu"
+      class="flex h-10 w-10 flex-col items-center justify-center gap-1.5 md:hidden">
+      <span class="h-px w-6 bg-ink"></span>
+      <span class="h-px w-6 bg-ink"></span>
+    </button>
+  </div>
+  <nav id="mobile-menu" aria-label="メインメニュー" class="hidden flex-col border-t border-line px-6 py-2 md:hidden">
+    <a href="index.html" class="border-b border-line py-3 text-sm text-ink-soft">ホーム</a>
+    <a href="works.html" class="border-b border-line py-3 text-sm text-ink-soft">実績</a>
+    <a href="business.html" class="border-b border-line py-3 text-sm text-ink-soft">事業内容</a>
+    <a href="company.html" class="border-b border-line py-3 text-sm text-brand-ink">会社情報</a>
+    <a href="contact.html" class="py-3 text-sm text-ink-soft">お問い合わせ</a>
+  </nav>
+</header>
+
+<div class="bg-brand-ink">
+  <div class="mx-auto max-w-6xl px-6 py-6 md:px-10">
+    <span class="inline-block rounded-full bg-white/15 px-4 py-1.5 text-xs tracking-[0.25em] text-white">COMPANY</span>
+    <h1 class="mt-3 font-display text-3xl text-white md:text-5xl">会社情報</h1>
+  </div>
+</div>
+
+<main class="flex-1">
+  <div class="mx-auto max-w-6xl px-6 py-12 md:px-10 md:py-16">
+    <div class="flex flex-col gap-12 md:flex-row md:items-start">
+
+      <div class="min-w-0 flex-1">
+        <p class="text-sm leading-loose text-ink-soft">
+          1998年の設立以来、出版社の雑誌やコミックスを中心に、紙面のデザインを手がけてきました。
+          かわいいデザイン、柔らかいデザインを得意としています。
+        </p>
+
+        <section aria-labelledby="origin-heading" class="mt-10 overflow-hidden rounded-card border border-line bg-paper">
+          <div class="bg-brand-ink px-6 py-3">
+            <h2 id="origin-heading" class="font-display text-lg text-white">社名の由来</h2>
+          </div>
+          <div class="space-y-5 px-6 py-8 text-sm leading-loose text-ink">
+            <p>
+              会社の名前を付けるにあたり、まず最初は "P" のつく言葉をつけたかったんです。
+              "P" は元気に前向き、飛び出すイメージ。
+              "P" がついている言葉に、私の中には暗いイメージがありませんでした。
+              pleasure、paradise、passion、peace などなど……。
+            </p>
+            <p>
+              pal の意味は仲間、pallette はそのまま絵のパレット。
+              スタッフやクライアントを含め、色とりどりの違う個性がパレットの上で混ぜ合わさり、
+              美しい絵になる……というイメージで名付けました。
+            </p>
+            <p>
+              これからも、すべての個性を活かしつつ、引き出しつつ、
+              ステキな作品を作って行けたらと考えています。
+            </p>
+            <p class="pt-2 text-right font-display text-base text-ink">代表　白井秀子</p>
+          </div>
+        </section>
+
+        <section aria-labelledby="overview-heading" class="mt-10 overflow-hidden rounded-card border border-line bg-paper">
+          <div class="bg-brand-ink px-6 py-3">
+            <h2 id="overview-heading" class="font-display text-lg text-white">会社概要</h2>
+          </div>
+          <dl class="px-6">
+            <div class="grid grid-cols-1 gap-2 border-b border-line py-6 sm:grid-cols-[10rem_1fr] sm:gap-6">
+              <dt class="text-sm tracking-wide text-ink-soft">会社名</dt>
+              <dd class="text-base text-ink">有限会社パルパレット（Palpallette）</dd>
+            </div>
+            <div class="grid grid-cols-1 gap-2 border-b border-line py-6 sm:grid-cols-[10rem_1fr] sm:gap-6">
+              <dt class="text-sm tracking-wide text-ink-soft">設立</dt>
+              <dd class="text-base text-ink">1998年</dd>
+            </div>
+            <div class="grid grid-cols-1 gap-2 border-b border-line py-6 sm:grid-cols-[10rem_1fr] sm:gap-6">
+              <dt class="text-sm tracking-wide text-ink-soft">代表者</dt>
+              <dd class="text-base text-ink">白井秀子</dd>
+            </div>
+            <div class="grid grid-cols-1 gap-2 border-b border-line py-6 sm:grid-cols-[10rem_1fr] sm:gap-6">
+              <dt class="text-sm tracking-wide text-ink-soft">所在地</dt>
+              <dd class="text-base text-ink">〒178-0063 東京都練馬区東大泉7-32-6</dd>
+            </div>
+            <div class="grid grid-cols-1 gap-2 border-b border-line py-6 sm:grid-cols-[10rem_1fr] sm:gap-6">
+              <dt class="text-sm tracking-wide text-ink-soft">アクセス</dt>
+              <dd class="text-base text-ink">西武池袋線 大泉学園駅から徒歩11分</dd>
+            </div>
+            <div class="grid grid-cols-1 gap-2 border-b border-line py-6 sm:grid-cols-[10rem_1fr] sm:gap-6">
+              <dt class="text-sm tracking-wide text-ink-soft">Tel / Fax</dt>
+              <dd class="text-base text-ink">03-4296-4965</dd>
+            </div>
+            <div class="grid grid-cols-1 gap-2 border-b border-line py-6 sm:grid-cols-[10rem_1fr] sm:gap-6">
+              <dt class="text-sm tracking-wide text-ink-soft">事業内容</dt>
+              <dd class="text-base text-ink">雑誌・書籍（コミックス）のデザイン、ポスター・パンフレット・チラシ、ロゴデザイン ほか</dd>
+            </div>
+            <div class="grid grid-cols-1 gap-2 py-6 sm:grid-cols-[10rem_1fr] sm:gap-6">
+              <dt class="text-sm tracking-wide text-ink-soft">主な取引先</dt>
+              <dd class="text-base text-ink">株式会社講談社 ほか出版社各社</dd>
+            </div>
+          </dl>
+        </section>
+      </div>
+
+      <aside class="w-full shrink-0 space-y-10 md:w-72">
+        <div>
+          <h2 class="border-b-2 border-brand-ink pb-2 font-display text-sm tracking-wide text-ink">最近の実績</h2>
+          <ul class="mt-4 space-y-3 text-sm">
+            <li><a href="works.html" class="text-ink-soft hover:text-brand-ink">BE・LOVE 2025年4月号 表紙</a></li>
+            <li><a href="works.html" class="text-ink-soft hover:text-brand-ink">ちはやふる 公式コミックガイド</a></li>
+            <li><a href="works.html" class="text-ink-soft hover:text-brand-ink">マグカル募集要項チラシ</a></li>
+            <li><a href="works.html" class="text-ink-soft hover:text-brand-ink">別冊フレンド 表紙</a></li>
+            <li><a href="works.html" class="text-ink-soft hover:text-brand-ink">社畜フランケン 1〜2巻</a></li>
+          </ul>
+        </div>
+        <div>
+          <h2 class="border-b-2 border-brand-ink pb-2 font-display text-sm tracking-wide text-ink">カテゴリー</h2>
+          <ul class="mt-4 space-y-3 text-sm">
+            <li><a href="works.html" class="text-ink-soft hover:text-brand-ink">雑誌</a></li>
+            <li><a href="works.html" class="text-ink-soft hover:text-brand-ink">コミックス・書籍</a></li>
+            <li><a href="works.html" class="text-ink-soft hover:text-brand-ink">ポスター・チラシ</a></li>
+          </ul>
+        </div>
+        <div>
+          <h2 class="border-b-2 border-brand-ink pb-2 font-display text-sm tracking-wide text-ink">検索</h2>
+          <form class="mt-4 flex" onsubmit="return false">
+            <label for="search" class="sr-only">検索キーワード</label>
+            <input id="search" type="search" placeholder="キーワード" class="w-full rounded-l-full border border-line-strong bg-paper px-4 py-2 text-sm">
+            <button type="submit" class="rounded-r-full bg-brand-ink px-4 text-sm text-white">検索</button>
+          </form>
+        </div>
+      </aside>
+    </div>
+  </div>
+</main>
+
+<footer class="mt-auto border-t border-line bg-paper">
+  <div class="mx-auto flex max-w-6xl flex-col gap-8 px-6 py-12 md:flex-row md:items-end md:justify-between md:px-10">
+    <div>
+      <img src="../public/palpalletteNameOnlylogo.jpeg" alt="Palpallette" class="h-8 w-auto">
+      <p class="mt-3 max-w-sm text-sm leading-relaxed text-ink-soft">
+        雑誌・コミックス・書籍からロゴまで。<br>かわいいデザイン、柔らかいデザインをお任せください。
+      </p>
+    </div>
+    <nav aria-label="フッターメニュー" class="flex flex-wrap gap-x-6 gap-y-2 text-sm text-ink-soft">
+      <a href="index.html" class="hover:text-brand-ink">ホーム</a>
+      <a href="works.html" class="hover:text-brand-ink">実績</a>
+      <a href="business.html" class="hover:text-brand-ink">事業内容</a>
+      <a href="company.html" class="hover:text-brand-ink">会社情報</a>
+      <a href="contact.html" class="hover:text-brand-ink">お問い合わせ</a>
+    </nav>
+  </div>
+  <div class="border-t border-line px-6 py-4 text-xs text-ink-soft md:px-10">&copy; 2026 Palpallette</div>
+</footer>
+
+</body>
+</html>

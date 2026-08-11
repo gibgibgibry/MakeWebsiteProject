@@ -24,7 +24,7 @@
           'line-strong': '#8a7a86',
           brand: '#ff80ff',
           'brand-ui': '#e0439f',
-          'brand-ink': '#c2187f',
+          'brand-ink': '#cb3b92',
           'brand-wash': '#ffeafd',
           'brand-wash-15': '#ffecff',
         },
@@ -46,7 +46,7 @@
 <header class="sticky top-0 z-50 border-b border-line bg-paper">
   <div class="mx-auto flex max-w-6xl items-center justify-between px-6 py-3 md:px-10">
     <a href="index.html" class="block shrink-0">
-      <img src="../public/palpallette_Mainlogo.png" alt="Palpallette" class="h-11 w-auto md:h-14">
+      <img src="../public/palpallette_Mainlogo_transparent.png" alt="Palpallette" class="h-11 w-auto md:h-14">
     </a>
     <nav aria-label="メインメニュー" class="hidden gap-8 md:flex">
       <a href="index.html" aria-current="page" class="text-sm tracking-wide text-brand-ink">ホーム</a>
@@ -72,17 +72,24 @@
 </header>
 
 <!-- 旧サイト（palpallette.sakura.ne.jp）はホーム＝作品フィードそのものだった。
-     ここでも「ホーム＝実績フィード」を主役にする構成に寄せている。 -->
+     ここでも「ホーム＝実績フィード」を主役にする構成に寄せている。
+     ロゴは透過版のため、白カードで囲わず帯に直接乗せられる。 -->
 <div class="bg-brand-ink">
-  <div class="mx-auto max-w-6xl px-6 py-10 md:px-10 md:py-14">
-    <span class="inline-block rounded-full bg-white/15 px-4 py-1.5 text-xs tracking-[0.25em] text-white">DESIGN OFFICE</span>
-    <h1 class="mt-4 font-display text-2xl leading-snug text-white md:text-4xl">
-      かわいいを、ていねいにデザインする。
-    </h1>
-    <p class="mt-4 max-w-xl text-sm leading-loose text-white/85">
-      有限会社パルパレットは、1998年から出版社の雑誌やコミックスを中心に紙面のデザインを
-      手がけてきたデザイン事務所です。かわいいデザイン、柔らかいデザイン全般、お任せください。
-    </p>
+  <div class="mx-auto max-w-6xl px-6 py-12 md:px-10 md:py-16">
+    <div class="grid gap-8 md:grid-cols-[1fr_28rem] md:items-center">
+      <div>
+        <span class="inline-block rounded-full bg-white/15 px-4 py-1.5 text-xs tracking-[0.25em] text-white">DESIGN OFFICE</span>
+        <h1 class="mt-4 font-display text-2xl leading-snug text-white md:text-4xl">
+          かわいいを、ていねいにデザインする。
+        </h1>
+        <p class="mt-4 max-w-xl text-sm leading-loose text-white/85">
+          有限会社パルパレットは、1998年から出版社の雑誌やコミックスを中心に紙面のデザインを
+          手がけてきたデザイン事務所です。かわいいデザイン、柔らかいデザイン全般、お任せください。
+        </p>
+      </div>
+      <img src="../public/palpallette_Mainlogo_transparent.png" alt="Palpallette DESIGN"
+        class="w-full max-w-sm justify-self-center drop-shadow-[0_12px_28px_rgba(0,0,0,0.3)] md:max-w-none md:justify-self-end">
+    </div>
   </div>
 </div>
 
@@ -179,7 +186,7 @@
 <footer class="mt-auto border-t border-line bg-paper">
   <div class="mx-auto flex max-w-6xl flex-col gap-8 px-6 py-12 md:flex-row md:items-end md:justify-between md:px-10">
     <div>
-      <img src="../public/palpalletteNameOnlylogo.jpeg" alt="Palpallette" class="h-8 w-auto">
+      <img src="../public/palpalletteNameOnlylogo_transparent.png" alt="Palpallette" class="h-8 w-auto">
       <p class="mt-3 max-w-sm text-sm leading-relaxed text-ink-soft">
         雑誌・コミックス・書籍からロゴまで。<br>かわいいデザイン、柔らかいデザインをお任せください。
       </p>
