@@ -1,53 +1,71 @@
-# PROGRESS: デザインPOC追加要望対応
+# PROGRESS: 本番依存の脆弱性対応（next 16.4.3 への更新ほか）
 
-対象: `PalpalettHomePage/design-poc/*.html`（Next.js本体には影響しない）
+対象: `PalpalettHomePage/package.json` / `package-lock.json`（アプリのコードは原則変更しない）
+
+## 前タスクの未完了事項（このタスクとは別に扱う）
+
+- 脆弱性チェック自動化（`.github/dependabot.yml`、`.github/workflows/ci.yml`、
+  `.github/workflows/security-audit.yml`）は作成・ローカル検証済み。
+  ユーザー承認を得て、このタスクと同時に別コミットとしてコミット済み（手順6参照）。
 
 ## 要望
 
-1. メインカラー（マゼンタ）を、"DESIGN OFFICE" ラベルで使われている色に変更
-2. 透過処理済みロゴ（`palpallette_Mainlogo_transparent.png`）をHomeのメインビジュアルとして配置
-3. 変更前のデザインをバックアップとして残す
+`npm audit --omit=dev` の結果（5件: critical 1 / high 4）を解消する。
+
+| パッケージ | 現状 | 対応 |
+|---|---|---|
+| next（critical） | 16.2.12 | 16.4.3 へ更新（`eslint-config-next` も 16.4.3 に揃える） |
+| postcss（high） | next 内部の 8.4.31 | next 16.4.3 が 8.5.23 を使うため、next の更新で解消 |
+| sharp（high） | 0.34.5 | next 16.4.3 が ^0.35.5 を使うため、next の更新で解消 |
+| nanoid（high） | 3.3.16 | `npm audit fix`（`--force` なし） |
+| source-map-js（high） | 1.2.1 | `npm audit fix`（`--force` なし） |
+
+`react` / `react-dom`（19.2.4）は next 16.4.3 の peer 要件 `^19.0.0` を満たすため更新不要。
 
 ## 事前調査（完了）
 
-- [x] `public/` を確認 — ユーザーが旧ロゴ（不透明版）を `public/old/` へ移動済み、
-      新しい透過ロゴ2点が `public/` 直下に配置されていることを確認。
-      **現状、design-poc内の画像パスは旧ファイルを指しており壊れている**ため、
-      今回の対応と合わせて修正が必要。
-- [x] `palpallette_Mainlogo_transparent.png` の透過を検証（92.3%のピクセルが
-      alpha=0の完全透明。プレビューに見えるグレーはビューアーの背景表示であり、
-      画像データ自体は正しく透過されている）。1536×1024px。
-- [x] "DESIGN OFFICE" ラベルの実効色を実測: `rgba(255,255,255,0.15)` を
-      現行の帯色 `#c2187f` に重ねた実効色は **`#cb3b92`**。
-      白文字とのコントラストは **4.59:1**（AA基準4.5:1をぎりぎり満たす）。
+- [x] next 16系の最新は 16.4.3、`eslint-config-next@16.4.3` も存在することを確認。
+- [x] 作業開始時点の未コミット変更: `CLAUDE.md`（ユーザー編集）、`.github/`（前タスク）、
+      `PROGRESS.md`。**このタスクのコミットには `package.json` / `package-lock.json` /
+      `PROGRESS.md`（と、必要が生じたコード修正）のみを含める。**
 
 ## ステップ
 
-- [x] 1. `design-poc-backup/`（変更前スナップショット）を作成した。
-       完了内容: `design-poc-backup/{index,works,business,company,contact}.html`
-       （変更前の5ファイルのコピー）と `design-poc-backup/README.md` を作成。
-       変更ファイル: `design-poc-backup/*`（新規6ファイル）
-       冪等性: 既存なら中身を現状の5ファイルで上書きする実装（再実行しても同じ結果）。
-- [x] 2. 全5ファイルの画像参照を新しい透過ロゴに更新した
-       （`palpallette_Mainlogo.png` → `palpallette_Mainlogo_transparent.png`、
-       `palpalletteNameOnlylogo.jpeg` → `palpalletteNameOnlylogo_transparent.png`）。
-       変更ファイル: `design-poc/{index,works,business,company,contact}.html`
-       （sedによる文字列置換、5ファイルとも2箇所ずつ＝計10箇所）
-- [x] 3. 全5ファイルの `tailwind.config` 内 `'brand-ink'` の値を
-       `#c2187f` → `#cb3b92` に変更した。
-       変更ファイル: 同上（各ファイル1箇所）
-- [x] 4. Homeページ（index.html）のヒーローを再構成した。
-       変更内容: 帯の中を2カラム化（左: 既存のコピー、右: 透過ロゴを大きく配置）。
-       白カードでの囲いは不要になった（透過のため帯に直接乗る）。
-       変更ファイル: `design-poc/index.html`
-- [x] 5. 検証完了。
-       - `npm run lint` / `npx tsc --noEmit`: 影響なし（両方エラーなし）
-       - 全5ページで `getComputedStyle` により背景色(`#ffecff`)・帯色(`#cb3b92`)を実測確認
-       - 全5ページで画像読み込み成功（`complete:true`、404なし、consoleエラーなし）
-       - 横スクロール: 390px幅・1385px幅の両方で全ページ `overflow: 0` を確認
-       - スクリーンショットでロゴの視認性を確認（黒い線画がピンク帯上で明瞭に読める）
-- [x] 6. git commit 済み（`e355cbf`）。
+- [x] 1. `npm install next@16.4.3 eslint-config-next@16.4.3 --save-exact` 完了。
+       結果: next 16.4.3、eslint-config-next 16.4.3、sharp 0.35.5（修正版）、
+       next内部のpostcss 8.5.23（修正版）。critical は解消。
+       変更ファイル: `package.json`（next / eslint-config-next の2行）、`package-lock.json`
+       メモ: `sharp` 0.35 は `require("sharp/package.json")` を禁止しているため、
+       バージョン確認は `fs` で package.json を直接読む必要がある。
+- [x] 2. `npm audit fix`（`--force` なし）完了。**全体（開発用含む）で 0 件**になった。
+       結果: nanoid 3.3.20、source-map-js 1.2.2。開発用の残り3件も
+       brace-expansion / fastq / js-yaml / zod のパッチ・マイナー更新で解消。
+       lockfile差分: バージョン変更46件・追加4件（optional/devのみ）・削除0件。メジャー更新なし。
+       変更ファイル: `package-lock.json`（`package.json` は手順1の2行以外変化なし）
+- [x] 3. 同梱ドキュメントで 16.3 / 16.4 の変更点を確認した（全ドキュメントのバージョン履歴を抽出）。
+       結果: ほぼ新機能の追加のみ。このサイトが使う機能（next/image・ISR・revalidateTag・
+       generateStaticParams・next/font・opengraph-image）に関わる変更なし。
+       注意点:
+       - `enablePrerenderSourceMaps` のデフォルトが `true` に（ビルド時のエラー表示のみ、影響なし）
+       - `agentRules`（16.3〜）: `next dev` 実行時に `PalpalettHomePage/AGENTS.md` の管理ブロックを
+         Next.jsが自動更新する。次回 `npm run dev` 時に差分が出るが、Next.js自身による更新なので
+         コミットしてよい。e2e は `build && start` のため発生しない。
+       変更ファイル: なし
+- [x] 4. 検証完了: `npm run lint` 通過、`npx next typegen && npx tsc --noEmit` 通過、
+       `CI=true npm run test:e2e` **34件全通過**（画像最適化・OGP画像・ISR再検証・
+       dynamicParamsによるオンデマンド生成など、今回の脆弱性に関わる機能のテストを含む）。
+       変更ファイル: なし
+- [x] 5. 監査結果: `npm audit --omit=dev` **0件**、`npm audit`（全体）**0件**。
+       `security-audit.yml` と同じ判定（`--omit=dev --audit-level=high`）も終了コード0。
+       変更ファイル: なし
+- [x] 6. git commit（ユーザー承認済み）。2つのコミットに分けた:
+       1. `fix(deps)`: `package.json`、`package-lock.json`、`PROGRESS.md`
+       2. `ci`: `.github/dependabot.yml`、`.github/workflows/ci.yml`、`.github/workflows/security-audit.yml`
+       `CLAUDE.md`（ユーザー編集中）は含めていない。ハッシュは `git log` で確認できる。
 
 ## 次の具体的なアクション
 
-このタスクは完了。次のフィードバック待ち。
+このタスクは完了。残作業はユーザー側:
+- push と Vercel での再デプロイ（公開中のサイトに修正を反映するため）
+- GitHub の Settings → Code security で Dependabot alerts / security updates をON
+- Actions タブで「Security audit」を手動実行して動作確認
