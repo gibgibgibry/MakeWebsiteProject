@@ -1,0 +1,67 @@
+# 検証CI: lint → 型チェック → e2e（ビルドを含む）
+#
+# PR作成時と main への push 時に実行する。Dependabot の更新PRが
+# 「入れても壊れないか」をここで判定する。
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  # PRは新しいpushが来たら古い実行を止める。main は全pushを最後まで検証する。
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+defaults:
+  run:
+    # アプリ本体はワークスペース直下ではなく PalpalettHomePage/ にある
+    working-directory: PalpalettHomePage
+
+jobs:
+  verify:
+    name: lint / typecheck / e2e
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+          # defaults.run.working-directory は uses: のステップには効かないため明示する
+          cache-dependency-path: PalpalettHomePage/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        # next-env.d.ts とルート型（PageProps 等）は .gitignore 対象で、
+        # クリーンな環境には存在しない。tsc の前に next typegen で生成する。
+        run: npx next typegen && npx tsc --noEmit
+
+      - name: Install Playwright browser
+        run: npx playwright install --with-deps chromium
+
+      - name: E2E tests
+        # playwright.config.ts の webServer が microCMS モックの起動と
+        # build && start を行う。テスト用の環境変数も webServer.env から注入されるため
+        # シークレットは不要（シークレットを渡されない Dependabot のPRでもそのまま動く）。
+        run: npm run test:e2e
+
+      - name: Upload test results
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: playwright-test-results
+          path: PalpalettHomePage/test-results/
+          if-no-files-found: ignore
+          retention-days: 7

@@ -1,0 +1,53 @@
+# Dependabot の設定。
+#
+# 脆弱性の即時アラートと、緊急のセキュリティ更新PRは、このファイルではなく
+# リポジトリの Settings → Code security で「Dependabot alerts」
+# 「Dependabot security updates」をONにすると動く。
+# このファイルは定期的な更新提案と、PRのまとめ方を定義する。
+version: 2
+
+updates:
+  - package-ecosystem: npm
+    # アプリ本体はワークスペース直下ではなく PalpalettHomePage/ にある
+    directory: /PalpalettHomePage
+    schedule:
+      interval: weekly
+      day: monday
+      time: "09:00"
+      timezone: Asia/Tokyo
+    commit-message:
+      prefix: "chore(deps)"
+    groups:
+      # next と eslint-config-next、react と react-dom は同じバージョンで
+      # 揃っていないと壊れる。別々のPRに分かれないよう1つにまとめる。
+      nextjs-react:
+        patterns:
+          - "next"
+          - "eslint-config-next"
+          - "react"
+          - "react-dom"
+          - "@types/react"
+          - "@types/react-dom"
+      # セキュリティ更新でも同じ組み合わせは一緒に上げる
+      nextjs-react-security:
+        applies-to: security-updates
+        patterns:
+          - "next"
+          - "eslint-config-next"
+          - "react"
+          - "react-dom"
+      # 開発用ツールのマイナー・パッチ更新は1つのPRにまとめて数を抑える
+      dev-tooling:
+        dependency-type: development
+        update-types:
+          - minor
+          - patch
+
+  # CIで使う GitHub Actions 自体の更新
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+      timezone: Asia/Tokyo
+    commit-message:
+      prefix: "chore(ci)"

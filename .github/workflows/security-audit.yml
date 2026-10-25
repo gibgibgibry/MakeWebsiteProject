@@ -1,0 +1,43 @@
+# 監査: 本番依存に high 以上の既知の脆弱性がないかを npm audit で検査する。
+#
+# 検証CI（ci.yml）とは分けている。依存と無関係なPRが「新しく公表された脆弱性」で
+# 止まらないよう、毎週の定期実行と、依存ファイルが変わったPRのときだけ動かす。
+#
+# 定期実行が失敗した場合の通知は、このファイルの cron を最後に変更したユーザーに届く。
+name: Security audit
+
+on:
+  schedule:
+    # 毎週月曜 9:00 JST（cron は UTC で指定する）
+    - cron: "0 0 * * 1"
+  # Actions タブから手動実行もできるようにする
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "PalpalettHomePage/package.json"
+      - "PalpalettHomePage/package-lock.json"
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    working-directory: PalpalettHomePage
+
+jobs:
+  audit:
+    name: npm audit (production deps, high+)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+
+      - name: Audit production dependencies
+        # npm audit は package-lock.json だけを読むので npm ci は不要。
+        # 開発用ツール（eslint 等）はサイトの実行時に含まれないため --omit=dev で除外し、
+        # high 以上が見つかったら失敗させる。
+        run: npm audit --omit=dev --audit-level=high
