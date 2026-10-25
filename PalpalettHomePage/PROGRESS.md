@@ -1,71 +1,47 @@
-# PROGRESS: 本番依存の脆弱性対応（next 16.4.3 への更新ほか）
+# PROGRESS: リモート main とのマージ（push 拒否の解消）
 
-対象: `PalpalettHomePage/package.json` / `package-lock.json`（アプリのコードは原則変更しない）
+対象: リポジトリ全体の git 履歴、`PalpalettHomePage/package.json` / `package-lock.json`
 
-## 前タスクの未完了事項（このタスクとは別に扱う）
+## 背景
 
-- 脆弱性チェック自動化（`.github/dependabot.yml`、`.github/workflows/ci.yml`、
-  `.github/workflows/security-audit.yml`）は作成・ローカル検証済み。
-  ユーザー承認を得て、このタスクと同時に別コミットとしてコミット済み（手順6参照）。
+`git push origin main` が non-fast-forward で拒否された。
 
-## 要望
+- リモート側: Dependabot の PR #3（next 16.2.12 → 16.4.1）がマージ済み（`8902861`, `ca5a35a`）
+- ローカル側: 6コミット先行。うち `adcf3d2` で next を **16.4.3** へ更新済み（audit 0件、e2e 34件通過）
+- 衝突予測（`git merge-tree` で試算済み）: `package.json` と `package-lock.json` のみ
 
-`npm audit --omit=dev` の結果（5件: critical 1 / high 4）を解消する。
+方針: 衝突2ファイルは**ローカル側（16.4.3）を採用**する。16.4.1 より新しく、
+他の脆弱性（nanoid / source-map-js 等）も解消済みのため。
+force-push / rebase は使わない（CLAUDE.md で禁止、GitHub 上のマージ履歴を壊すため）。
 
-| パッケージ | 現状 | 対応 |
-|---|---|---|
-| next（critical） | 16.2.12 | 16.4.3 へ更新（`eslint-config-next` も 16.4.3 に揃える） |
-| postcss（high） | next 内部の 8.4.31 | next 16.4.3 が 8.5.23 を使うため、next の更新で解消 |
-| sharp（high） | 0.34.5 | next 16.4.3 が ^0.35.5 を使うため、next の更新で解消 |
-| nanoid（high） | 3.3.16 | `npm audit fix`（`--force` なし） |
-| source-map-js（high） | 1.2.1 | `npm audit fix`（`--force` なし） |
-
-`react` / `react-dom`（19.2.4）は next 16.4.3 の peer 要件 `^19.0.0` を満たすため更新不要。
-
-## 事前調査（完了）
-
-- [x] next 16系の最新は 16.4.3、`eslint-config-next@16.4.3` も存在することを確認。
-- [x] 作業開始時点の未コミット変更: `CLAUDE.md`（ユーザー編集）、`.github/`（前タスク）、
-      `PROGRESS.md`。**このタスクのコミットには `package.json` / `package-lock.json` /
-      `PROGRESS.md`（と、必要が生じたコード修正）のみを含める。**
+未コミットの `CLAUDE.md`（ユーザー編集中）はリモート側で変更されていないため
+マージの影響を受けない。**コミットには含めない。**
 
 ## ステップ
 
-- [x] 1. `npm install next@16.4.3 eslint-config-next@16.4.3 --save-exact` 完了。
-       結果: next 16.4.3、eslint-config-next 16.4.3、sharp 0.35.5（修正版）、
-       next内部のpostcss 8.5.23（修正版）。critical は解消。
-       変更ファイル: `package.json`（next / eslint-config-next の2行）、`package-lock.json`
-       メモ: `sharp` 0.35 は `require("sharp/package.json")` を禁止しているため、
-       バージョン確認は `fs` で package.json を直接読む必要がある。
-- [x] 2. `npm audit fix`（`--force` なし）完了。**全体（開発用含む）で 0 件**になった。
-       結果: nanoid 3.3.20、source-map-js 1.2.2。開発用の残り3件も
-       brace-expansion / fastq / js-yaml / zod のパッチ・マイナー更新で解消。
-       lockfile差分: バージョン変更46件・追加4件（optional/devのみ）・削除0件。メジャー更新なし。
-       変更ファイル: `package-lock.json`（`package.json` は手順1の2行以外変化なし）
-- [x] 3. 同梱ドキュメントで 16.3 / 16.4 の変更点を確認した（全ドキュメントのバージョン履歴を抽出）。
-       結果: ほぼ新機能の追加のみ。このサイトが使う機能（next/image・ISR・revalidateTag・
-       generateStaticParams・next/font・opengraph-image）に関わる変更なし。
-       注意点:
-       - `enablePrerenderSourceMaps` のデフォルトが `true` に（ビルド時のエラー表示のみ、影響なし）
-       - `agentRules`（16.3〜）: `next dev` 実行時に `PalpalettHomePage/AGENTS.md` の管理ブロックを
-         Next.jsが自動更新する。次回 `npm run dev` 時に差分が出るが、Next.js自身による更新なので
-         コミットしてよい。e2e は `build && start` のため発生しない。
+- [x] 1. `git merge --no-commit --no-ff origin/main` を実行。予測どおり
+       `package.json`（`next` の1行: 16.4.3 vs 16.4.1）と `package-lock.json`（12箇所）が衝突。
+       変更ファイル: なし（マージ状態に入っただけ。`.git/MERGE_HEAD` 作成）
+- [x] 2. `git checkout --ours` → `git add` で解消。衝突マーカー無し、
+       next / eslint-config-next とも 16.4.3。2ファイルは HEAD（ローカル）と完全一致。
+       変更ファイル: `package.json` / `package-lock.json`（ステージ済み、内容はHEADと同一）
+- [x] 3. `npm ls --depth=0` 正常終了（exit 0）。next 16.4.3 がインストール済みで不整合なし。
+       lockfile が HEAD と同一のため `npm install` は不要と判断（実行していない）。
        変更ファイル: なし
 - [x] 4. 検証完了: `npm run lint` 通過、`npx next typegen && npx tsc --noEmit` 通過、
-       `CI=true npm run test:e2e` **34件全通過**（画像最適化・OGP画像・ISR再検証・
-       dynamicParamsによるオンデマンド生成など、今回の脆弱性に関わる機能のテストを含む）。
+       `CI=true npm run test:e2e` **34件全通過**（45秒）、
+       `npm audit --omit=dev` **0件**、`npm audit`（全体）**0件**。
        変更ファイル: なし
-- [x] 5. 監査結果: `npm audit --omit=dev` **0件**、`npm audit`（全体）**0件**。
-       `security-audit.yml` と同じ判定（`--omit=dev --audit-level=high`）も終了コード0。
-       変更ファイル: なし
-- [x] 6. git commit（ユーザー承認済み）。2つのコミットに分けた:
-       1. `fix(deps)`: `package.json`、`package-lock.json`、`PROGRESS.md`
-       2. `ci`: `.github/dependabot.yml`、`.github/workflows/ci.yml`、`.github/workflows/security-audit.yml`
-       `CLAUDE.md`（ユーザー編集中）は含めていない。ハッシュは `git log` で確認できる。
+- [x] 5. マージ内容を提示し、ユーザーの承認を得た。
+- [x] 6. マージコミット `a068db8` を作成（親: `a92d956` / `ca5a35a`）。
+       ファイル内容はローカルHEADと同一。`CLAUDE.md` は含めていない。
+       この PROGRESS.md の更新は別コミット。
+- [ ] 7. push はユーザーが実行（`git push origin main`）。
 
 ## 次の具体的なアクション
 
-このタスクは完了。残作業はユーザー側:
-- push と Vercel での再デプロイ（公開中のサイトに修正を反映するため）
-- GitHub の Settings → Code security で Dependabot alerts / security updates をON
-- Actions タブで「Security audit」を手動実行して動作確認
+ユーザーが `git push origin main` を実行する（fast-forward になるので通るはず）。
+push 後の確認事項:
+- 不要になった Dependabot PR（nanoid / source-map-js / js-yaml / multi）が自動で閉じるか確認。
+  閉じない場合は手動で Close してよい（いずれも 16.4.3 更新と `npm audit fix` で対応済み）
+- Vercel の再デプロイ完了を確認
