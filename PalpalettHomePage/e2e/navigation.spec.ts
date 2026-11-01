@@ -10,6 +10,11 @@ test("home page renders hero and nav", async ({ page }) => {
   await page.goto("/");
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
   await expect(headerNav(page).getByRole("link", { name: "会社情報" })).toBeVisible();
+
+  // ヘッダーのロゴ画像がホームへのリンクになっていること（alt がリンク名になる）
+  await expect(
+    page.getByRole("banner").getByRole("link", { name: "Palpallette" }),
+  ).toHaveAttribute("href", "/");
 });
 
 test.describe("page navigation", () => {
@@ -72,8 +77,10 @@ test.describe("contact page", () => {
     await expect(page.getByRole("link", { name: "03-4296-4965" })).toBeVisible();
     await expect(page.getByText("東京都練馬区東大泉7-32-6")).toBeVisible();
 
-    // 問い合わせフォームは撤去済み
-    await expect(page.locator("form")).toHaveCount(0);
+    // 問い合わせフォームは撤去済み。
+    // サイドバーのサイト内検索（role="search" の GET フォーム）だけは全ページにある。
+    await expect(page.locator('form:not([role="search"])')).toHaveCount(0);
+    await expect(page.locator("textarea")).toHaveCount(0);
     await expect(page.getByRole("button", { name: "送信する" })).toHaveCount(0);
   });
 });

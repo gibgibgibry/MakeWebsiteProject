@@ -21,8 +21,12 @@ test.describe("works list", () => {
     }
   });
 
-  test("filters by category without leaving the page", async ({ page }) => {
+  test("filters by category without reloading the page", async ({ page }) => {
     await page.goto("/works");
+    // ページの再読み込みが起きたらこの目印が消える
+    await page.evaluate(() => {
+      (window as unknown as { __noReload: boolean }).__noReload = true;
+    });
 
     await page.getByRole("button", { name: "雑誌", exact: true }).click();
 
@@ -30,21 +34,127 @@ test.describe("works list", () => {
     await expect(cards).toHaveCount(1);
     await expect(cards.first()).toContainText("BE・LOVE 2025年4月号 表紙");
 
-    // 絞り込みは searchParams を使わない（使うとISRが無効化されるため）
-    await expect(page).toHaveURL(/\/works$/);
+    // 絞り込みは URL に残る（共有・再読み込みできる）が、読み取りはクライアント側だけで行う。
+    // ページの searchParams prop を使うと /works が動的レンダリングになり ISR が効かなくなるため。
+    await expect(page).toHaveURL(/\/works\?category=magazine$/);
+    expect(
+      await page.evaluate(
+        () => (window as unknown as { __noReload?: boolean }).__noReload,
+      ),
+    ).toBe(true);
 
     await page.getByRole("button", { name: "すべて", exact: true }).click();
     await expect(cards).toHaveCount(EXPECTED_ORDER.length);
+    await expect(page).toHaveURL(/\/works$/);
+  });
+
+  test("applies the category from the URL on load", async ({ page }) => {
+    await page.goto("/works?category=comics");
+
+    const cards = page.getByTestId("works-grid").locator("> li");
+    await expect(cards).toHaveCount(1);
+    await expect(cards.first()).toContainText("ちはやふる 公式コミックガイド");
+    await expect(
+      page.getByRole("button", { name: "コミックス・書籍", exact: true }),
+    ).toHaveAttribute("aria-pressed", "true");
+  });
+
+  test("ignores an unknown category in the URL", async ({ page }) => {
+    await page.goto("/works?category=does-not-exist");
+
+    const cards = page.getByTestId("works-grid").locator("> li");
+    await expect(cards).toHaveCount(EXPECTED_ORDER.length);
+    await expect(
+      page.getByRole("button", { name: "すべて", exact: true }),
+    ).toHaveAttribute("aria-pressed", "true");
   });
 
   test("navigates to a work detail page", async ({ page }) => {
     await page.goto("/works");
-    await page.getByRole("link", { name: /ちはやふる 公式コミックガイド/ }).click();
+    // サイドバーの「最近の実績」にも同名のリンクがあるので、一覧の中に限定する
+    await page
+      .getByTestId("works-grid")
+      .getByRole("link", { name: /ちはやふる 公式コミックガイド/ })
+      .click();
 
     await expect(page).toHaveURL(/\/works\/chihayafuru-comic-guide$/);
     await expect(
       page.getByRole("heading", { level: 1, name: "ちはやふる 公式コミックガイド" }),
     ).toBeVisible();
+  });
+});
+
+test.describe("sidebar", () => {
+  const sidebar = (page: import("@playwright/test").Page) =>
+    page.getByRole("complementary", { name: "サイドバー" });
+
+  test("lists recent works newest first, and hides them on the home page", async ({
+    page,
+  }) => {
+    await page.goto("/company");
+    const recent = sidebar(page)
+      .locator("section", {
+        has: page.getByRole("heading", { name: "最近の実績" }),
+      })
+      .getByRole("link");
+    // publishedOn → 制作年 → compareWorks の順（フィクスチャでは一覧と同じ並びになる）
+    await expect(recent).toHaveText(EXPECTED_ORDER);
+
+    // ホームは本文が最近の実績のフィードなので、サイドバーに重複させない
+    await page.goto("/");
+    await expect(
+      sidebar(page).getByRole("heading", { name: "最近の実績" }),
+    ).toHaveCount(0);
+    await expect(
+      page.getByRole("heading", { level: 2, name: "最近の実績" }),
+    ).toBeVisible();
+  });
+
+  test("a category link filters the works list", async ({ page }) => {
+    await page.goto("/business");
+    await sidebar(page)
+      .getByRole("link", { name: "ポスター・チラシ", exact: true })
+      .click();
+
+    await expect(page).toHaveURL(/\/works\?category=poster$/);
+    const cards = page.getByTestId("works-grid").locator("> li");
+    await expect(cards).toHaveCount(1);
+    await expect(cards.first()).toContainText("マグカル・パフォーミング");
+  });
+
+  test("searches works by keyword", async ({ page }) => {
+    await page.goto("/company");
+    const search = sidebar(page).getByRole("searchbox", { name: "実績を検索" });
+    await search.fill("ちはやふる");
+    await search.press("Enter");
+
+    await expect(page).toHaveURL(/\/works\?q=/);
+    const cards = page.getByTestId("works-grid").locator("> li");
+    await expect(cards).toHaveCount(1);
+    await expect(cards.first()).toContainText("ちはやふる 公式コミックガイド");
+    await expect(page.getByRole("status")).toHaveText(
+      "「ちはやふる」の検索結果：1件",
+    );
+
+    await page.getByRole("button", { name: "検索をクリア" }).click();
+    await expect(cards).toHaveCount(EXPECTED_ORDER.length);
+    await expect(page).toHaveURL(/\/works$/);
+  });
+
+  test("search ignores letter case and full-width characters", async ({
+    page,
+  }) => {
+    // 「ＢＥ・ｌｏｖｅ」（全角・小文字混在）でも「BE・LOVE」に一致する
+    await page.goto(`/works?q=${encodeURIComponent("ＢＥ・ｌｏｖｅ")}`);
+    const cards = page.getByTestId("works-grid").locator("> li");
+    await expect(cards).toHaveCount(1);
+    await expect(cards.first()).toContainText("BE・LOVE 2025年4月号 表紙");
+  });
+
+  test("shows an empty state when nothing matches", async ({ page }) => {
+    await page.goto(`/works?q=${encodeURIComponent("該当なしのキーワード")}`);
+    await expect(page.getByText("該当する実績がありません。")).toBeVisible();
+    await expect(page.getByTestId("works-grid")).toHaveCount(0);
   });
 });
 

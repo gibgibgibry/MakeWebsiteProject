@@ -31,9 +31,10 @@ npm run dev          # start dev server (Turbopack) at localhost:3000
 npm run build         # production build
 npm run start          # serve the production build
 npm run lint            # eslint
-npx tsc --noEmit          # typecheck (no dedicated script)
-npm run test:e2e            # run the full Playwright suite
-npx playwright test e2e/navigation.spec.ts -g "contact page"   # run a single test/file
+npx next typegen && npx tsc --noEmit   # typecheck (typegen creates route types; CI does the same)
+PLAYWRIGHT_BROWSERS_PATH=0 npm run test:e2e   # run the full Playwright suite
+PLAYWRIGHT_BROWSERS_PATH=0 npx playwright test e2e/navigation.spec.ts -g "contact page"   # single test/file
+node scripts/compose-logo.mjs   # regenerate the logo and icons from the source images
 ```
 
 `test:e2e` builds and starts a production server automatically (see `playwright.config.ts`
@@ -45,14 +46,32 @@ npx playwright test e2e/navigation.spec.ts -g "contact page"   # run a single te
   `PalpalettHomePage/src/*`.
 - Tailwind CSS v4: no `tailwind.config`; design tokens are declared in
   `PalpalettHomePage/src/app/globals.css` via `@theme inline`.
-- **The brand pink has three tiers and they are not interchangeable.** `#ff80ff` has only
-  2.15:1 contrast on white, so it is decoration-only. Measured ratios are recorded in
-  `globals.css`; re-measure if you change any value.
-  - `brand` `#ff80ff` (2.15:1) — decorative fills only. **Never text, never icons.**
-  - `brand-ui` `#e0439f` (3.84:1) — focus rings, borders, type ≥24px
-  - `brand-ink` `#c2187f` (5.63:1) — body-size text, links, filled buttons with white text
-  - also `line` `#ece3e9` is decorative-only (1.26:1); use `line-strong` `#8a7a86` (4.03:1)
+- **The brand pink is split by role and the roles are not interchangeable.** The page background
+  is `paper-tint` `#ffecff`, not white, which lowers every text contrast — ratios below are
+  "on white / on paper-tint". Measured values are recorded in `globals.css`; re-measure if you
+  change any value.
+  - `brand` `#ff80ff` (2.15 / —) — decorative fills only. **Never text, never icons.**
+  - `brand-ui` `#e0439f` (3.84 / 3.42) — focus rings, borders, type ≥24px
+  - `brand-fill` `#cb3b92` (4.59 / 4.08) — **fills only**: bands, buttons, heading underlines.
+    White text on it is 4.59:1. Never use it for small text on the page background (fails AA).
+  - `brand-ink` `#c2187f` (5.63 / 5.01) — body-size text, links, small badges with white text
+  - also `line` `#ece3e9` is decorative-only (1.26:1); use `line-strong` `#8a7a86` (4.03 / 3.59)
     for a border that is the sole indicator of a control.
+  - On a `brand-fill` band, focus rings switch to white (see `globals.css`), and translucent
+    white (`text-white/85`, `bg-white/15`) is too low-contrast — use solid `text-paper`, and
+    `bg-brand-ink` for a badge.
+  - `brand-wash` chips disappear on `paper-tint`; a chip that sits on the page background uses
+    `bg-paper`.
+- Layout: every page is `PageBand` (pink heading band) + `SidebarLayout` (content + `Sidebar`
+  with recent works / categories / search). `Sidebar` is an async server component that reads
+  microCMS, so **every page — including the otherwise static Business/Company/Contact — fetches
+  the CMS at build time** and is invalidated by the `works` tag.
+- The logo `public/palpallette_logo.png` and `src/app/icon.png` / `apple-icon.png` are generated
+  by `scripts/compose-logo.mjs` from `palpallette_logo_without_dog.png` (text) +
+  `transparent_background.png` (dog). Re-run it only when the source images change and commit
+  the output; it is not part of the build.
+- Don't wrap Japanese copy across source lines in JSX: JSX turns the line break into a
+  half-width space (「です。 かわいい」). Keep each sentence on one line.
 - Fonts: `font-sans` = Noto Sans JP (body), `font-display` = Zen Maru Gothic (headings).
   The rounded gothic is deliberate — it carries the 「柔らかい」 brand. Mincho was removed.
 - Fonts are loaded via `next/font/google` in `PalpalettHomePage/src/app/layout.tsx` with
@@ -92,8 +111,14 @@ npx playwright test e2e/navigation.spec.ts -g "contact page"   # run a single te
 - Images: `images.remotePatterns` must **omit `search`** — microCMS URLs carry query strings and
   `search: ""` would reject every one. Don't set `quality` (v16 allows only `[75]` by default).
   Use the `preload` prop, not the deprecated `priority`.
-- `/works` filters categories client-side on purpose; `searchParams` would make the route
-  dynamic and kill ISR.
+- `/works` keeps filter/search state in the URL (`?category=`, `?q=`, linked from the sidebar)
+  but reads it **client-side** with `useSearchParams` inside `<Suspense>` (`WorksGrid`). Never
+  read the page's `searchParams` prop — it makes the route dynamic and kills ISR. The Suspense
+  fallback renders the unfiltered list so the static HTML still contains every work; buttons
+  update the URL with `window.history.replaceState` (no server round trip).
+- Home and the sidebar order works by `publishedOn` (falling back to `year`) via
+  `getRecentWorks`; the list page uses `compareWorks` (`order` → `year` → title). There is no
+  `featured` field — it was removed from the schema.
 - The webhook at `src/app/api/revalidate/route.ts` must never gain a side effect beyond cache
   invalidation — microCMS signatures have no timestamp, so replay is possible.
 
@@ -107,75 +132,28 @@ npx playwright test e2e/navigation.spec.ts -g "contact page"   # run a single te
   mock state, so it is isolated; `setup` resets state because `reuseExistingServer` can carry
   data over between runs.
 - ISR assertions only hold against `build && start`, never `next dev`.
+- Playwright browsers live inside the project: install and run with `PLAYWRIGHT_BROWSERS_PATH=0`
+  (`node_modules/playwright-core/.local-browsers`), never the user-level cache outside the
+  project. Ask before downloading, and check for vulnerability reports on the bundled browser
+  build first.
 
 - Target deployment is Vercel with **Root Directory set to `PalpalettHomePage`**.
   Required env vars are documented in `PalpalettHomePage/README.md`.
 
 ## 禁止事項
 
-以下はユーザーの明示的な承認なしに行ってはならない。
-
-**システムへの変更禁止（最優先）**
-- OSの設定変更は禁止。
-- レジストリ編集禁止。
-- システムサービスの追加・削除禁止。
-- PATH変更禁止。
-- Windows設定変更禁止。
-- WSL設定変更禁止。
-- Docker Desktop設定変更禁止。
-- ファイアウォール設定変更禁止。
-
-**勝手なインストール禁止**（ユーザーの承認なしに）
-- `npm install -g`
-- `winget`
-- `choco`
-- `brew`
-- `apt`
-- `pip install`
-- `cargo install` など、グローバル／システムスコープへのインストール全般。
-
-**プロジェクトフォルダ外は読み書き禁止**
-- 変更は必ずプロジェクト配下のみに限定する。
-- プロジェクト外のファイル・フォルダの削除禁止。
-- プロジェクト外のファイル・フォルダのリネーム禁止。
-- プロジェクト外のファイル・フォルダの移動禁止。
-- プロジェクト外のファイル・フォルダの上書き禁止。
-
-**Git操作禁止。コミットは必ず確認する。**
-- `git push` 禁止
-- `git push --force` 禁止
-- `git reset --hard` 禁止
-- `git clean` 禁止
-- `git rebase` 禁止
-- ブランチ削除禁止
-- タグ削除禁止
-
-**Secrets管理**
-- `.env` を生成しない。
-- APIキーをコードやログに書き込まない。
-- シークレットをログ出力しない。
-- 認証情報を保存しない。
-- 環境変数の値を画面やログに表示しない。
-
-**外部アクセス・外部API実行禁止**（ユーザーの承認なしに）
-- メール送信禁止
-- Slack投稿禁止
-- Teams投稿禁止
-- HTTP POST禁止
-- Webhook送信禁止
-
-**コスト発生操作の禁止**
-- AWS / Azure / GCP / Vercel / Cloudflare / Supabase / Firebase へのデプロイ禁止。
-- クラウドリソースの作成禁止。
-- 課金対象となる操作は一切禁止。
+共通の禁止事項は [`../../CLAUDE.md`](../../CLAUDE.md) を参照(全プロジェクト共通、自動的に適用される)。
 
 ## ディレクトリ構成
 
 - `MakeWebsiteProject/`　プロダクト横断のリソースや設定ファイル等を配置する（このファイル、`.claude/` など）
-  - `PalpalettHomePage/`　プロダクト（PalPalletサイト）ごとのリソースを配置。`README.md`あり
-    - `src/app/`　App Routerのページ（`page.tsx`, `layout.tsx`, `globals.css`、`company/`・`business/`・`contact/`の各ルート）
-    - `src/components/`　共通コンポーネント（`Header.tsx`, `Footer.tsx`）
+  - `PalpalettHomePage/`　プロダクト（Palpalletteサイト）ごとのリソースを配置。`README.md`あり
+    - `src/app/`　App Routerのページ（`page.tsx`, `layout.tsx`, `globals.css`、`works/`・`company/`・`business/`・`contact/`の各ルート、`api/revalidate/`、`icon.png`・`apple-icon.png`・`opengraph-image.tsx`）
+    - `src/components/`　共通コンポーネント（`Header.tsx`, `Footer.tsx`, `PageBand.tsx`, `SidebarLayout.tsx`, `Sidebar.tsx`, `CtaBand.tsx`, `WorksGrid.tsx`, `WorkCard.tsx`, `WorkFeedItem.tsx`, `WorkGallery.tsx`）
+    - `src/lib/`　microCMSのデータ層（`microcms/`）、ナビゲーション・事業内容などの定数、日付の整形
+    - `scripts/`　開発用スクリプト（`compose-logo.mjs`：ロゴ・アイコンの生成。ビルドでは実行しない）
+    - `design-poc/`　デザインのPOC（静的HTML。本番には含まれない）
     - `e2e/`　Playwrightのe2eテスト
-    - `public/`　静的アセット
+    - `public/`　静的アセット（ロゴ画像とその素材）
     - `README.md`　このプロダクトの説明・セットアップ手順
     - `package.json` / `next.config.ts` / `tsconfig.json` / `eslint.config.mjs` / `postcss.config.mjs` / `playwright.config.ts` など設定ファイル一式

@@ -1,14 +1,20 @@
+import Image from "next/image";
 import Link from "next/link";
 import { NAV_ITEMS } from "@/lib/navigation";
+import nameLogo from "../../public/palpalletteNameOnlylogo_transparent.png";
 
 export default function Footer() {
   return (
-    <footer className="mt-auto border-t border-line bg-paper-soft">
+    <footer className="mt-auto border-t border-line bg-paper">
       <div className="mx-auto flex max-w-6xl flex-col gap-8 px-6 py-12 md:flex-row md:items-end md:justify-between md:px-10">
         <div>
-          <p className="font-display text-2xl text-ink">
-            Pal<span className="text-brand-ink">pallette</span>
-          </p>
+          <Image
+            src={nameLogo}
+            alt="Palpallette"
+            width={85}
+            height={32}
+            className="h-8 w-auto"
+          />
           <p className="mt-3 max-w-sm text-sm leading-relaxed text-ink-soft">
             雑誌・コミックス・書籍からロゴまで。
             <br />

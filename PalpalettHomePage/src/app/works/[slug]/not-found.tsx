@@ -8,8 +8,7 @@ export default function WorkNotFound() {
         お探しの実績が見つかりませんでした
       </h1>
       <p className="mt-6 max-w-xl text-sm leading-loose text-ink-soft">
-        URLが変更されたか、公開が終了した可能性があります。
-        一覧から改めてお探しください。
+        URLが変更されたか、公開が終了した可能性があります。一覧から改めてお探しください。
       </p>
       <Link
         href="/works"

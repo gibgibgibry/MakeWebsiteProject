@@ -3,28 +3,34 @@
 /* ---------------------------------------------------------------------------
  * カラートークン
  *
- * ブランドピンク #ff80ff は白背景でのコントラストが 2.15:1 しかない。
- * テキストに使うと WCAG AA（本文 4.5:1）を大きく下回るため、用途別に3段階へ分けている。
- * 実測値（白背景 / #fdf5fb 背景）:
- *   brand       #ff80ff  2.15 / 2.01  → 装飾専用。テキスト・アイコンに使わない
- *   brand-ui    #e0439f  3.84 / 3.59  → 大きい文字(24px+)・フォーカスリング・境界線
- *   brand-ink   #c2187f  5.63 / 5.26  → 本文サイズのテキスト・リンク・塗りボタン背景
- *   ink         #1c1418 18.06 /16.88
- *   ink-soft    #625660  6.96 / 6.50
- *   line        #ece3e9  1.26 / 1.17  → 装飾罫線のみ
- *   line-strong #8a7a86  4.03 / 3.77  → それ単体でUIを示す境界線
- * 白文字 on brand-ink = 5.63、brand-ink on brand-wash = 4.94。いずれもAA適合。
+ * ブランドピンクは「塗り」と「文字」で別の色を使う。
+ * ページ背景が薄いピンク（paper-tint）のため、白背景より文字のコントラストが下がる。
+ * 塗りの色（brand-fill #cb3b92）を小さい文字に使うとピンク背景上で 4.08:1 となり
+ * WCAG AA（本文 4.5:1）を満たさないので、文字には必ず brand-ink を使う。
+ *
+ * 実測値（白 / paper-tint #ffecff / brand-wash #ffeafd）:
+ *   brand        #ff80ff  2.15 / —    / —     → 装飾専用。テキスト・アイコンに使わない
+ *   brand-ui     #e0439f  3.84 / 3.42 / 3.37  → 大きい文字(24px+)・フォーカスリング
+ *   brand-fill   #cb3b92  4.59 / 4.08 / 4.03  → 帯・ボタン・下線などの「塗り」専用。
+ *                                              白文字 on brand-fill = 4.59（AA適合）
+ *   brand-ink    #c2187f  5.63 / 5.01 / 4.94  → 本文サイズの文字・リンク
+ *   ink          #1c1418 18.06 /16.08 /15.86
+ *   ink-soft     #625660  6.96 / 6.19 / 6.11
+ *   line         #ece3e9  1.26 / —    / —     → 装飾罫線のみ
+ *   line-strong  #8a7a86  4.03 / 3.59 / 3.54  → それ単体でUIを示す境界線
  * 色を変更する場合は必ずコントラスト比を再計測すること。
  * ------------------------------------------------------------------------- */
 :root {
   --color-paper: #ffffff;
   --color-paper-soft: #fdf5fb;
+  --color-paper-tint: #ffecff;
   --color-ink: #1c1418;
   --color-ink-soft: #625660;
   --color-line: #ece3e9;
   --color-line-strong: #8a7a86;
   --color-brand: #ff80ff;
   --color-brand-ui: #e0439f;
+  --color-brand-fill: #cb3b92;
   --color-brand-ink: #c2187f;
   --color-brand-wash: #ffeafd;
 }
@@ -32,12 +38,14 @@
 @theme inline {
   --color-paper: var(--color-paper);
   --color-paper-soft: var(--color-paper-soft);
+  --color-paper-tint: var(--color-paper-tint);
   --color-ink: var(--color-ink);
   --color-ink-soft: var(--color-ink-soft);
   --color-line: var(--color-line);
   --color-line-strong: var(--color-line-strong);
   --color-brand: var(--color-brand);
   --color-brand-ui: var(--color-brand-ui);
+  --color-brand-fill: var(--color-brand-fill);
   --color-brand-ink: var(--color-brand-ink);
   --color-brand-wash: var(--color-brand-wash);
 
@@ -48,14 +56,19 @@
 }
 
 body {
-  background: var(--color-paper);
+  background: var(--color-paper-tint);
   color: var(--color-ink);
 }
 
 /* リンク主体のサイトなのでフォーカス表示は必須。
-   brand-ui は 3.84:1 で UI 部品の 3:1 要件を満たす。 */
+   brand-ui はピンク背景上でも 3.42:1 で UI 部品の 3:1 要件を満たす。 */
 :focus-visible {
   outline: 2px solid var(--color-brand-ui);
   outline-offset: 2px;
   border-radius: 2px;
+}
+
+/* 帯（brand-fill）の上では brand-ui のリングが背景とほぼ同色で見えなくなるため白にする */
+.bg-brand-fill :focus-visible {
+  outline-color: var(--color-paper);
 }

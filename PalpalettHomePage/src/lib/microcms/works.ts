@@ -20,8 +20,9 @@ const WORK_SUMMARY_FIELDS = [
   "category",
   "coverImage",
   "year",
-  "featured",
   "order",
+  "publishedOn",
+  "description",
   "updatedAt",
 ].join(",");
 
@@ -64,11 +65,21 @@ export async function getWorks(): Promise<WorkSummary[]> {
   return [...contents].sort(compareWorks);
 }
 
-export async function getFeaturedWorks(limit = 6): Promise<WorkSummary[]> {
+/**
+ * 「最近の実績」の並び。公開日（publishedOn）の新しい順。
+ * publishedOn が無い作品は制作年で比べる（ISO 文字列と年の文字列は辞書順でそのまま比較できる）。
+ * 同じ場合は compareWorks に委ねて並びを確定させる。
+ */
+function compareRecent(a: WorkSummary, b: WorkSummary): number {
+  const keyA = a.publishedOn ?? (a.year ? String(a.year) : "");
+  const keyB = b.publishedOn ?? (b.year ? String(b.year) : "");
+  if (keyA !== keyB) return keyA < keyB ? 1 : -1;
+  return compareWorks(a, b);
+}
+
+export async function getRecentWorks(limit = 5): Promise<WorkSummary[]> {
   const works = await getWorks();
-  const featured = works.filter((work) => work.featured);
-  // featured が1件も設定されていなければ、先頭から埋めて空欄にしない
-  return (featured.length > 0 ? featured : works).slice(0, limit);
+  return [...works].sort(compareRecent).slice(0, limit);
 }
 
 /** generateStaticParams 用。ビルドを止めないため、ここだけは失敗を握りつぶす。 */

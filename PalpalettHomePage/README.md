@@ -11,6 +11,9 @@ Next.js 16 (App Router) + TypeScript + Tailwind CSS v4 で構築。
 - Home / 実績 / 事業内容 / 会社情報 / お問い合わせ
 - **問い合わせフォームは無い。** 連絡先は静的テキストとして公開する
 - 実績は microCMS から取得し、Webhook によるオンデマンド ISR で反映する
+- 全ページ共通のサイドバー（最近の実績 / カテゴリー / 検索）。カテゴリーと検索は
+  `/works?category=<ID>` `/works?q=<キーワード>` へのリンクで、実績一覧がクライアント側で読む
+  （ページで `searchParams` を読むと動的レンダリングになり ISR が効かなくなるため）
 
 詳細な開発ガイドはリポジトリルートの `CLAUDE.md` を参照。
 
@@ -63,6 +66,16 @@ npx tsc --noEmit          # 型チェック
 npm run test:e2e            # Playwright e2eテスト一式
 ```
 
+### ロゴ・アイコンの生成
+
+```bash
+node scripts/compose-logo.mjs
+```
+
+`public/palpallette_logo_without_dog.png`（文字）と `public/transparent_background.png`（犬）を合成して
+`public/palpallette_logo.png` を、犬から `src/app/icon.png` / `apple-icon.png` を生成する。
+素材を差し替えたときだけ手動で実行し、生成物もコミットする（ビルドでは実行しない）。
+
 `test:e2e` はビルド＋起動を自動で行うため、事前に `npm run dev` を起動したままにしないこと
 （ポート3000が競合する）。
 
@@ -93,11 +106,10 @@ APIキーが無くても動く。テスト用の環境変数は `playwright.conf
 | `coverImage` | メインビジュアル | 画像 | ✅ |
 | `gallery` | 追加画像 | 繰り返しフィールド（カスタム `workImage`: 画像 + `caption`テキスト） | – |
 | `year` | 制作年 | 数値 | – |
-| `publishedOn` | 発行日 | 日時 | – |
+| `publishedOn` | 発行日（「最近の実績」の並び順と日付表示に使う。未入力なら制作年で並ぶ） | 日時 | – |
 | `role` | 担当 | 複数選択（装丁 / 本文デザイン / ロゴ / イラスト / DTP） | – |
-| `description` | 説明 | **テキストエリア**（リッチエディタは使わない） | – |
+| `description` | 説明（ホームのフィードの抜粋・キーワード検索にも使う） | **テキストエリア**（リッチエディタは使わない） | – |
 | `order` | 表示順 | 数値 | – |
-| `featured` | トップページに掲載 | 真偽値 | – |
 
 **重要な運用ルール**
 
@@ -138,8 +150,6 @@ APIキーが無くても動く。テスト用の環境変数は `playwright.conf
 ## 未対応事項（公開前に対応）
 
 - 公開用メールアドレスが未確定（`src/app/contact/page.tsx` の `EMAIL` が `null`）
-- ロゴ画像が未配置（`public/` に配置後、ヘッダー・フッターの文字ワードマークと
-  `opengraph-image.tsx`、favicon を差し替える）
 - 独自ドメインが未確定（`NEXT_PUBLIC_SITE_URL`）
 - microCMS のサービスが未作成
 - 旧サイトからの作品移行（画像は旧サーバーから再アップロードが必要）

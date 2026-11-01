@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import PageBand from "@/components/PageBand";
+import SidebarLayout from "@/components/SidebarLayout";
 
 export const metadata: Metadata = {
   title: "会社情報",
@@ -21,69 +23,72 @@ const COMPANY_INFO: { label: string; value: string }[] = [
   { label: "主な取引先", value: "株式会社講談社 ほか出版社各社" },
 ];
 
+/** 見出しをピンクの帯にした白いカード（旧サイトの見出しの意匠） */
+function BandCard({
+  id,
+  title,
+  children,
+}: {
+  id: string;
+  title: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <section
+      aria-labelledby={id}
+      className="mt-10 overflow-hidden rounded-card border border-line bg-paper"
+    >
+      <div className="bg-brand-fill px-6 py-3">
+        <h2 id={id} className="font-display text-lg text-paper">
+          {title}
+        </h2>
+      </div>
+      {children}
+    </section>
+  );
+}
+
 export default function CompanyPage() {
   return (
-    <div className="mx-auto max-w-6xl px-6 py-16 md:px-10 md:py-24">
-      <p className="text-sm tracking-[0.3em] text-brand-ink">COMPANY</p>
-      <h1 className="mt-4 font-display text-3xl text-ink md:text-5xl">会社情報</h1>
-      <p className="mt-6 max-w-xl text-sm leading-loose text-ink-soft">
-        1998年の設立以来、出版社の雑誌やコミックスを中心に、
-        紙面のデザインを手がけてきました。
-        かわいいデザイン、柔らかいデザインを得意としています。
-      </p>
+    <>
+      <PageBand eyebrow="COMPANY" title="会社情報" />
+      <SidebarLayout>
+        <p className="text-sm leading-loose text-ink-soft">
+          1998年の設立以来、出版社の雑誌やコミックスを中心に、紙面のデザインを手がけてきました。かわいいデザイン、柔らかいデザインを得意としています。
+        </p>
 
-      {/* 社名の由来は代表の言葉であり、この会社を最もよく表す部分なので前に出す */}
-      <section
-        aria-labelledby="origin-heading"
-        className="mt-16 rounded-card bg-brand-wash px-6 py-10 md:px-12 md:py-14"
-      >
-        <h2
-          id="origin-heading"
-          className="font-display text-2xl text-ink md:text-3xl"
-        >
-          社名の由来
-        </h2>
-        <div className="mt-6 max-w-2xl space-y-5 text-sm leading-loose text-ink">
-          <p>
-            会社の名前を付けるにあたり、まず最初は “P” のつく言葉をつけたかったんです。
-            “P” は元気に前向き、飛び出すイメージ。
-            “P” がついている言葉に、私の中には暗いイメージがありませんでした。
-            pleasure、paradise、passion、peace などなど……。
-          </p>
-          <p>
-            pal の意味は仲間、pallette はそのまま絵のパレット。
-            スタッフやクライアントを含め、色とりどりの違う個性がパレットの上で混ぜ合わさり、
-            美しい絵になる……というイメージで名付けました。
-          </p>
-          <p>
-            これからも、すべての個性を活かしつつ、引き出しつつ、
-            ステキな作品を作って行けたらと考えています。
-          </p>
-          <p className="pt-2 text-right font-display text-base text-ink">
-            代表　白井秀子
-          </p>
-        </div>
-      </section>
+        {/* 社名の由来は代表の言葉であり、この会社を最もよく表す部分なので前に出す */}
+        <BandCard id="origin-heading" title="社名の由来">
+          <div className="space-y-5 px-6 py-8 text-sm leading-loose text-ink">
+            <p>
+              会社の名前を付けるにあたり、まず最初は “P” のつく言葉をつけたかったんです。“P” は元気に前向き、飛び出すイメージ。“P” がついている言葉に、私の中には暗いイメージがありませんでした。pleasure、paradise、passion、peace などなど……。
+            </p>
+            <p>
+              pal の意味は仲間、pallette はそのまま絵のパレット。スタッフやクライアントを含め、色とりどりの違う個性がパレットの上で混ぜ合わさり、美しい絵になる……というイメージで名付けました。
+            </p>
+            <p>
+              これからも、すべての個性を活かしつつ、引き出しつつ、ステキな作品を作って行けたらと考えています。
+            </p>
+            <p className="pt-2 text-right font-display text-base text-ink">
+              代表　白井秀子
+            </p>
+          </div>
+        </BandCard>
 
-      <section aria-labelledby="overview-heading" className="mt-20">
-        <h2
-          id="overview-heading"
-          className="font-display text-2xl text-ink md:text-3xl"
-        >
-          会社概要
-        </h2>
-        <dl className="mt-8 border-t border-line">
-          {COMPANY_INFO.map((item) => (
-            <div
-              key={item.label}
-              className="grid grid-cols-1 gap-2 border-b border-line py-6 md:grid-cols-[12rem_1fr] md:gap-6"
-            >
-              <dt className="text-sm tracking-wide text-ink-soft">{item.label}</dt>
-              <dd className="text-base leading-relaxed text-ink">{item.value}</dd>
-            </div>
-          ))}
-        </dl>
-      </section>
-    </div>
+        <BandCard id="overview-heading" title="会社概要">
+          <dl className="px-6">
+            {COMPANY_INFO.map((item) => (
+              <div
+                key={item.label}
+                className="grid grid-cols-1 gap-2 border-b border-line py-6 last:border-b-0 sm:grid-cols-[10rem_1fr] sm:gap-6"
+              >
+                <dt className="text-sm tracking-wide text-ink-soft">{item.label}</dt>
+                <dd className="text-base leading-relaxed text-ink">{item.value}</dd>
+              </div>
+            ))}
+          </dl>
+        </BandCard>
+      </SidebarLayout>
+    </>
   );
 }

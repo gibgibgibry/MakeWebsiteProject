@@ -15,13 +15,14 @@ export default function WorkCard({ work, preload = false }: Props) {
       href={`/works/${work.id}`}
       className="group block focus-visible:outline-none"
     >
-      <div className="overflow-hidden rounded-card border border-line bg-paper-soft transition-colors group-hover:border-brand-ui">
+      <div className="overflow-hidden rounded-card border border-line bg-paper transition-colors group-hover:border-brand-ui">
         <Image
           src={work.coverImage.url}
           alt={work.title}
           width={work.coverImage.width}
           height={work.coverImage.height}
-          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 300px"
+          // サイドバーの横に並ぶので、lg 以上でもカード幅は 240px 程度に収まる
+          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 240px"
           preload={preload}
           className="h-auto w-full transition-transform duration-300 group-hover:scale-[1.03]"
         />
@@ -29,11 +30,12 @@ export default function WorkCard({ work, preload = false }: Props) {
 
       <div className="mt-3">
         {work.category && (
-          <span className="inline-block rounded-full bg-brand-wash px-3 py-1 text-xs text-brand-ink">
+          // ページ背景（paper-tint）上では brand-wash のチップが背景に溶けるため白地にする
+          <span className="inline-block rounded-full bg-paper px-3 py-1 text-xs text-brand-ink">
             {work.category.name}
           </span>
         )}
-        <h3 className="mt-2 font-display text-base leading-snug text-ink group-hover:text-brand-ink">
+        <h3 className="mt-2 font-display text-sm leading-snug text-ink group-hover:text-brand-ink">
           {work.title}
         </h3>
         <p className="mt-1 text-xs text-ink-soft">

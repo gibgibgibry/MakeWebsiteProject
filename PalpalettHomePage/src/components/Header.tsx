@@ -1,9 +1,11 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { NAV_ITEMS } from "@/lib/navigation";
+import logo from "../../public/palpallette_logo.png";
 
 function isActive(pathname: string, href: string): boolean {
   if (href === "/") return pathname === "/";
@@ -15,14 +17,23 @@ export default function Header() {
   const [open, setOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-line bg-paper/90 backdrop-blur">
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4 md:px-10">
+    <header className="sticky top-0 z-50 border-b border-line bg-paper">
+      <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3 md:px-10">
         <Link
           href="/"
-          className="font-display text-xl tracking-wide text-ink"
+          className="block shrink-0"
           onClick={() => setOpen(false)}
         >
-          Pal<span className="text-brand-ink">pallette</span>
+          {/* 全ページで画面上部にあるが LCP 要素ではないので preload ではなく eager。
+              width/height は md 以上での表示サイズ（srcset をこの大きさ基準で作らせる） */}
+          <Image
+            src={logo}
+            alt="Palpallette"
+            width={133}
+            height={56}
+            loading="eager"
+            className="h-12 w-auto md:h-14"
+          />
         </Link>
 
         <nav aria-label="メインメニュー" className="hidden gap-8 md:flex">

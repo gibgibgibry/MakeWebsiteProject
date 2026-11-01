@@ -1,141 +1,82 @@
+import Image from "next/image";
 import Link from "next/link";
-import WorkCard from "@/components/WorkCard";
-import { SERVICES } from "@/lib/services";
+import CtaBand from "@/components/CtaBand";
+import SidebarLayout from "@/components/SidebarLayout";
+import WorkFeedItem from "@/components/WorkFeedItem";
 import { isMicroCmsConfigured } from "@/lib/microcms/env";
-import { getFeaturedWorks } from "@/lib/microcms/works";
+import { getRecentWorks } from "@/lib/microcms/works";
+import logo from "../../public/palpallette_logo.png";
 
 export const revalidate = 3600;
 
+/** 旧サイトと同じく「ホーム = 実績のフィード」が主役の構成。 */
 export default async function Home() {
-  const featured = isMicroCmsConfigured() ? await getFeaturedWorks(4) : [];
+  const recent = isMicroCmsConfigured() ? await getRecentWorks(6) : [];
 
   return (
     <>
-      <section className="mx-auto max-w-6xl px-6 pb-20 pt-16 md:px-10 md:pb-28 md:pt-24">
-        <p className="text-sm tracking-[0.3em] text-brand-ink">DESIGN OFFICE</p>
-        <h1 className="mt-6 max-w-3xl font-display text-4xl leading-snug text-ink md:text-6xl md:leading-snug">
-          かわいいを、
-          <br />
-          ていねいにデザインする。
-        </h1>
-        <p className="mt-8 max-w-xl text-base leading-loose text-ink-soft">
-          有限会社パルパレットは、1998年から出版社の雑誌やコミックスを中心に
-          紙面のデザインを手がけてきたデザイン事務所です。
-          かわいいデザイン、柔らかいデザイン全般、お任せください。
-        </p>
-        <div className="mt-10 flex flex-wrap gap-4">
-          <Link
-            href="/works"
-            className="rounded-full bg-brand-ink px-7 py-3 text-sm tracking-wide text-paper transition-opacity hover:opacity-90"
-          >
-            実績を見る
-          </Link>
-          <Link
+      <section className="bg-brand-fill">
+        <div className="mx-auto max-w-6xl px-6 py-12 md:px-10 md:py-16">
+          <div className="grid gap-8 md:grid-cols-[1fr_28rem] md:items-center">
+            <div>
+              <span className="inline-block rounded-full bg-brand-ink px-4 py-1.5 text-xs tracking-[0.25em] text-paper">
+                DESIGN OFFICE
+              </span>
+              {/* 「デ／ザイン」のような語の途中で折り返さないよう、句読点の位置でだけ改行させる */}
+              <h1 className="mt-4 font-display text-2xl leading-snug text-paper md:text-4xl">
+                <span className="inline-block">かわいいを、</span>
+                <span className="inline-block">ていねいにデザインする。</span>
+              </h1>
+              <p className="mt-4 max-w-xl text-sm leading-loose text-paper">
+                有限会社パルパレットは、1998年から出版社の雑誌やコミックスを中心に紙面のデザインを手がけてきたデザイン事務所です。かわいいデザイン、柔らかいデザイン全般、お任せください。
+              </p>
+            </div>
+            {/* ファーストビューの最大要素（LCP）なので preload する */}
+            <Image
+              src={logo}
+              alt="Palpallette DESIGN"
+              sizes="(min-width: 768px) 448px, 384px"
+              preload
+              className="h-auto w-full max-w-sm justify-self-center drop-shadow-[0_12px_28px_rgba(0,0,0,0.3)] md:max-w-none md:justify-self-end"
+            />
+          </div>
+        </div>
+      </section>
+
+      <SidebarLayout
+        showRecent={false}
+        after={
+          <CtaBand
+            message="デザインのご相談、お待ちしています。"
             href="/contact"
-            className="rounded-full border border-line-strong px-7 py-3 text-sm tracking-wide text-ink transition-colors hover:border-ink hover:bg-ink hover:text-paper"
-          >
-            お問い合わせ
-          </Link>
-        </div>
-      </section>
-
-      <section
-        aria-label="主な取引先"
-        className="border-y border-line bg-brand-wash py-10"
+            label="お問い合わせはこちら"
+            className="mt-16"
+          />
+        }
       >
-        <div className="mx-auto max-w-6xl px-6 md:px-10">
-          <p className="text-xs tracking-[0.3em] text-brand-ink">CLIENT</p>
-          <p className="mt-3 font-display text-2xl text-ink md:text-3xl">
-            株式会社講談社
-            <span aria-hidden="true" className="mx-3 text-brand-ui">
-              /
-            </span>
-            出版社各社
-          </p>
-        </div>
-      </section>
-
-      {featured.length > 0 && (
-        <section
-          aria-labelledby="works-heading"
-          className="mx-auto max-w-6xl px-6 py-20 md:px-10 md:py-28"
-        >
-          <div className="flex items-end justify-between border-b border-line pb-6">
-            <h2
-              id="works-heading"
-              className="font-display text-2xl text-ink md:text-3xl"
-            >
-              実績
+        <section aria-labelledby="recent-heading">
+          <div className="flex items-baseline justify-between border-b-2 border-brand-fill pb-2">
+            <h2 id="recent-heading" className="font-display text-lg text-ink">
+              最近の実績
             </h2>
-            <Link
-              href="/works"
-              className="text-sm text-ink-soft hover:text-brand-ink"
-            >
+            <Link href="/works" className="text-sm text-brand-ink hover:underline">
               すべて見る →
             </Link>
           </div>
 
-          <ul className="mt-10 grid grid-cols-2 gap-x-6 gap-y-10 md:grid-cols-4">
-            {featured.map((work, i) => (
-              <li key={work.id}>
-                <WorkCard work={work} preload={i === 0} />
-              </li>
-            ))}
-          </ul>
+          {recent.length > 0 ? (
+            <ul className="mt-8 divide-y divide-line">
+              {recent.map((work) => (
+                <WorkFeedItem key={work.id} work={work} />
+              ))}
+            </ul>
+          ) : (
+            <p className="mt-8 rounded-card border border-line bg-paper px-6 py-16 text-center text-sm text-ink-soft">
+              実績は準備中です。
+            </p>
+          )}
         </section>
-      )}
-
-      <section
-        aria-labelledby="services-heading"
-        className="mx-auto max-w-6xl px-6 py-20 md:px-10 md:py-28"
-      >
-        <div className="flex items-end justify-between border-b border-line pb-6">
-          <h2
-            id="services-heading"
-            className="font-display text-2xl text-ink md:text-3xl"
-          >
-            事業内容
-          </h2>
-          <Link
-            href="/business"
-            className="text-sm text-ink-soft hover:text-brand-ink"
-          >
-            すべて見る →
-          </Link>
-        </div>
-
-        <div className="mt-10 grid gap-10 sm:grid-cols-2">
-          {SERVICES.map((service) => (
-            <div key={service.index}>
-              <p className="font-display text-3xl text-brand-ui">
-                {service.index}
-              </p>
-              <h3 className="mt-3 font-display text-lg text-ink">
-                {service.title}
-              </h3>
-              <p className="mt-3 text-sm leading-loose text-ink-soft">
-                {service.summary}
-              </p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section className="border-t border-line bg-paper-soft">
-        <div className="mx-auto flex max-w-6xl flex-col items-start justify-between gap-6 px-6 py-16 md:flex-row md:items-center md:px-10">
-          <h2 className="max-w-md font-display text-2xl leading-relaxed text-ink md:text-3xl">
-            デザインのご相談、
-            <br className="hidden sm:inline" />
-            お待ちしています。
-          </h2>
-          <Link
-            href="/contact"
-            className="rounded-full bg-brand-ink px-7 py-3 text-sm tracking-wide text-paper transition-opacity hover:opacity-90"
-          >
-            お問い合わせはこちら
-          </Link>
-        </div>
-      </section>
+      </SidebarLayout>
     </>
   );
 }

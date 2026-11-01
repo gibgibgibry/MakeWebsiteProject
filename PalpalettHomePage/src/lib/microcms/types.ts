@@ -48,10 +48,9 @@ export type Work = MicroCmsContentMeta & {
   role?: string[];
   description?: string;
   order?: number;
-  featured?: boolean;
 };
 
-/** 一覧カードの描画と sitemap に必要な最小限のフィールド。 */
+/** 一覧カード・ホームのフィード・サイドバー・sitemap に必要なフィールド。 */
 export type WorkSummary = Pick<
   Work,
   | "id"
@@ -60,8 +59,11 @@ export type WorkSummary = Pick<
   | "category"
   | "coverImage"
   | "year"
-  | "featured"
   | "order"
+  // サイドバーの「最近の実績」の並び順と、フィードの日付表示に使う
+  | "publishedOn"
+  // フィードの抜粋と、実績一覧のキーワード検索に使う
+  | "description"
   // sitemap の lastModified に使う
   | "updatedAt"
 >;

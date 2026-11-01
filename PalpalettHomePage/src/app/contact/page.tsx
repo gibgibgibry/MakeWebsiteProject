@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import PageBand from "@/components/PageBand";
+import SidebarLayout from "@/components/SidebarLayout";
 
 export const metadata: Metadata = {
   title: "お問い合わせ",
@@ -16,116 +18,120 @@ const ADDRESS = "東京都練馬区東大泉7-32-6";
 const ACCESS = "西武池袋線 大泉学園駅から徒歩11分";
 
 const TOPICS = [
-  "雑誌の表紙・誌面デザイン",
-  "コミックス・書籍の装丁",
-  "ポスター・パンフレット・チラシ",
-  "ロゴデザイン",
-  "付録やグッズのデザイン",
+  "雑誌の表紙・誌面デザイン","コミックス・書籍の装丁","ポスター・パンフレット・チラシ","ロゴデザイン","付録やグッズのデザイン",
 ];
 
 const STEPS = [
   {
     index: "01",
-    title: "ご連絡",
-    body: "お電話またはメールで、企画の概要・希望スケジュール・ご予算感をお知らせください。",
+    title: "ご連絡",body: "お電話またはメールで、企画の概要・希望スケジュール・ご予算感をお知らせください。",
   },
   {
     index: "02",
-    title: "お打ち合わせ",
-    body: "内容をうかがい、デザインの方向性と進め方をご相談します。",
+    title: "お打ち合わせ",body: "内容をうかがい、デザインの方向性と進め方をご相談します。",
   },
   {
     index: "03",
-    title: "お見積もり",
-    body: "作業範囲を確定し、お見積もりをご提示します。",
+    title: "お見積もり",body: "作業範囲を確定し、お見積もりをご提示します。",
   },
   {
     index: "04",
-    title: "制作開始",
-    body: "スケジュールに沿ってデザインを進行します。",
+    title: "制作開始",body: "スケジュールに沿ってデザインを進行します。",
   },
 ];
 
 export default function ContactPage() {
   return (
-    <div className="mx-auto max-w-6xl px-6 py-16 md:px-10 md:py-24">
-      <p className="text-sm tracking-[0.3em] text-brand-ink">CONTACT</p>
-      <h1 className="mt-4 font-display text-3xl text-ink md:text-5xl">
-        お問い合わせ
-      </h1>
-      <p className="mt-6 max-w-xl text-sm leading-loose text-ink-soft">
-        デザインのご相談・お見積もりのご依頼は、お電話またはメールにて承ります。
-        まずはお気軽にご連絡ください。
-      </p>
+    <>
+      <PageBand eyebrow="CONTACT" title="お問い合わせ" />
+      <SidebarLayout>
+        <p className="text-sm leading-loose text-ink-soft">
+          デザインのご相談・お見積もりのご依頼は、お電話またはメールにて承ります。まずはお気軽にご連絡ください。
+        </p>
 
-      <div className="mt-14 grid gap-14 md:grid-cols-[1fr_22rem]">
-        <div>
-          <h2 className="font-display text-xl text-ink">こんなご相談を承ります</h2>
-          <ul className="mt-6 space-y-3">
-            {TOPICS.map((topic) => (
-              <li
-                key={topic}
-                className="flex items-baseline gap-3 border-b border-line pb-3 text-sm text-ink"
-              >
-                <span aria-hidden="true" className="text-brand-ink">
-                  —
-                </span>
-                {topic}
-              </li>
-            ))}
-          </ul>
+        {/* 連絡先はこのページで最も重要な情報なので、1カラム時は先頭に出す。
+            xl 以上で右列へ（サイドバーと並ぶため、それ未満では横に並べると本文列が狭すぎる） */}
+        <div className="mt-8 grid gap-8 xl:grid-cols-[1fr_16rem]">
+          <section
+            aria-labelledby="contact-info-heading"
+            className="h-fit rounded-card border border-line bg-paper p-6 text-sm leading-loose text-ink-soft xl:col-start-2 xl:row-start-1"
+          >
+            <h2 id="contact-info-heading" className="sr-only">
+              連絡先
+            </h2>
 
-          <h2 className="mt-14 font-display text-xl text-ink">ご依頼の流れ</h2>
-          <ol className="mt-6 space-y-6">
-            {STEPS.map((step) => (
-              <li
-                key={step.index}
-                className="grid grid-cols-[3rem_1fr] gap-4 md:gap-6"
+            <p className="text-ink">お電話・FAX</p>
+            <p className="mt-1">
+              <a
+                href={`tel:${TEL_FAX.replace(/-/g, "")}`}
+                className="text-brand-ink hover:underline"
               >
-                <span className="font-display text-2xl text-brand-ui">
-                  {step.index}
-                </span>
-                <div>
-                  <p className="text-base text-ink">{step.title}</p>
-                  <p className="mt-1 text-sm leading-relaxed text-ink-soft">
-                    {step.body}
-                  </p>
-                </div>
-              </li>
-            ))}
-          </ol>
+                {TEL_FAX}
+              </a>
+            </p>
+
+            {EMAIL && (
+              <>
+                <p className="mt-8 text-ink">メール</p>
+                <p className="mt-1">
+                  <a
+                    href={`mailto:${EMAIL}`}
+                    className="break-all text-brand-ink hover:underline"
+                  >
+                    {EMAIL}
+                  </a>
+                </p>
+              </>
+            )}
+
+            <p className="mt-8 text-ink">所在地</p>
+            <address className="mt-1 not-italic">
+              {POSTAL_CODE}
+              <br />
+              {ADDRESS}
+            </address>
+            <p className="mt-2 text-xs">{ACCESS}</p>
+          </section>
+
+          <div className="space-y-8 xl:col-start-1 xl:row-start-1">
+            <section className="rounded-card border border-line bg-paper p-6">
+              <h2 className="font-display text-xl text-ink">こんなご相談を承ります</h2>
+              <ul className="mt-5 space-y-3">
+                {TOPICS.map((topic) => (
+                  <li
+                    key={topic}
+                    className="flex items-baseline gap-3 border-b border-line pb-3 text-sm text-ink last:border-b-0 last:pb-0"
+                  >
+                    <span aria-hidden="true" className="text-brand-ink">
+                      —
+                    </span>
+                    {topic}
+                  </li>
+                ))}
+              </ul>
+            </section>
+
+            <section className="rounded-card border border-line bg-paper p-6">
+              <h2 className="font-display text-xl text-ink">ご依頼の流れ</h2>
+              <ol className="mt-5 space-y-6">
+                {STEPS.map((step) => (
+                  <li key={step.index} className="grid grid-cols-[3rem_1fr] gap-4">
+                    <span className="font-display text-2xl text-brand-ui">
+                      {step.index}
+                    </span>
+                    <div>
+                      <p className="text-base text-ink">{step.title}</p>
+                      <p className="mt-1 text-sm leading-relaxed text-ink-soft">
+                        {step.body}
+                      </p>
+                    </div>
+                  </li>
+                ))}
+              </ol>
+            </section>
+          </div>
         </div>
-
-        <aside className="text-sm leading-loose text-ink-soft">
-          <h2 className="sr-only">連絡先</h2>
-
-          <p className="text-ink">お電話・FAX</p>
-          <p className="mt-1">
-            <a href={`tel:${TEL_FAX.replace(/-/g, "")}`} className="hover:text-brand-ink">
-              {TEL_FAX}
-            </a>
-          </p>
-
-          {EMAIL && (
-            <>
-              <p className="mt-8 text-ink">メール</p>
-              <p className="mt-1">
-                <a href={`mailto:${EMAIL}`} className="hover:text-brand-ink">
-                  {EMAIL}
-                </a>
-              </p>
-            </>
-          )}
-
-          <p className="mt-8 text-ink">所在地</p>
-          <address className="mt-1 not-italic">
-            {POSTAL_CODE}
-            <br />
-            {ADDRESS}
-          </address>
-          <p className="mt-2 text-xs">{ACCESS}</p>
-        </aside>
-      </div>
-    </div>
+      </SidebarLayout>
+    </>
   );
 }
