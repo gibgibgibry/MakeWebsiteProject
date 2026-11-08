@@ -42,6 +42,17 @@ updates:
         update-types:
           - minor
           - patch
+    ignore:
+      # 型定義は実行環境の Node（CI・ローカル・Vercel とも 24）に合わせる。
+      # 新しいメジャーの型を入れると、24 に無い API を使っても型チェックで気づけない。
+      # Node 本体を上げるときに、あわせて手動で上げる。
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major"]
+      # eslint-config-next が同梱するプラグイン（eslint-plugin-import 等）が
+      # ESLint 9 までしか対応していない（ESLint 10 では npm が peer 依存を強制上書きする）。
+      # Next.js 側が ESLint 10 に対応したら、この ignore を外して更新する。
+      - dependency-name: "eslint"
+        update-types: ["version-update:semver-major"]
 
   # CIで使う GitHub Actions 自体の更新
   - package-ecosystem: github-actions

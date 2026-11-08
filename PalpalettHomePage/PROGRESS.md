@@ -52,15 +52,17 @@
        必要があるため）。変更は型定義と Dependabot 設定のみで実行時の動作に影響しないので、
        push 後の CI（main への push で lint・型・e2e が走る）で確認する。
        変更ファイル: なし
-- [ ] 9. 変更内容を提示し、コミットの承認を得てからコミット。
+- [x] 9. 変更内容を提示し、コミットの承認を得てからコミット（2026-11-08 ユーザー承認）。
+       コミット対象: `package.json` / `package-lock.json` / `.github/dependabot.yml` / この `PROGRESS.md`。
+       経緯: ignore 設定が未 push の間に Dependabot が PR #12（@types/node 20 → 26.6.6）を作成。
+       2026-11-08 ユーザー承認のうえ Close 済み（コメントなし）。
 - [ ] 10. push はユーザーが実行。
 
 ## 次の具体的なアクション
 
-ステップ9: 変更内容（`package.json` / `package-lock.json` / `.github/dependabot.yml` /
-`PROGRESS.md`）を提示し、コミットの承認を得る。`CLAUDE.md` は含めない。
-（注・2026-11-01）`PROGRESS.md` と `CLAUDE.md` は、下のタスク（デザイン反映）のコミットに含めてコミット済み。
-このタスクのコミット対象は残りの3ファイルになる。
+ステップ10: ユーザーが `git push origin main` を実行。push 後に CI（lint・型・e2e）の成功を
+`gh run list --commit <sha>`（PowerShell）で確認し、Dependabot が @types/node 26 系の PR を
+再作成しないことを次回の週次チェックで確認する。
 
 メモ: 監視スクリプトの `gh api compare` は Git Bash 上で毎回エラーになっていた
 （PowerShell では正常に動作）。gh を使う監視は PowerShell で行う。
@@ -247,6 +249,6 @@
 ## 次の具体的なアクション
 
 このタスクは完了。残りはユーザー側の作業:
-- push（push 後の CI で lint・型・e2e が走る。`main` への push は Vercel 本番デプロイを伴う）
+- ~~push~~ 済み（2026-11-08。`65cc4df` の CI 成功・Vercel 本番デプロイ成功を確認）
 - microCMS の管理画面で `works` API のスキーマから `featured` を削除
 - 上のタスク（Dependabot / @types/node）のコミット承認（ステップ9）は別途
