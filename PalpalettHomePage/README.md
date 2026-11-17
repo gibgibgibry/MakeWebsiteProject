@@ -34,7 +34,7 @@ npm install
 | `MICROCMS_SERVICE_DOMAIN` | ✅ | microCMS のサービスドメイン（`https://<これ>.microcms.io`） |
 | `MICROCMS_API_KEY` | ✅ | microCMS の APIキー。**取得(GET)のみ**の権限で発行する |
 | `MICROCMS_WEBHOOK_SECRET` | ✅ | Webhook の署名検証用シークレット |
-| `NEXT_PUBLIC_SITE_URL` | ✅(公開時) | 公開オリジン（例 `https://example.com`）。OGP と sitemap の絶対URLに使う |
+| `NEXT_PUBLIC_SITE_URL` | ✅(公開時) | 公開オリジン（本番は `https://www.palpallette.com`）。OGP と sitemap の絶対URLに使う。**Vercel の本番ビルドで未設定だとビルドが失敗する**（プレビュー・CI・ローカルは警告のみ） |
 | `MICROCMS_BASE_URL` | – | APIのベースURLを上書きする。e2e のモック用。本番では `*.microcms.io` 以外を拒否する |
 
 `MICROCMS_API_KEY` に `NEXT_PUBLIC_` を付けないこと。付けるとクライアントバンドルに
@@ -47,12 +47,12 @@ npm install
 
 ```powershell
 # PowerShell
-$env:NEXT_PUBLIC_SITE_URL='https://example.com'; npm run build
+$env:NEXT_PUBLIC_SITE_URL='https://www.palpallette.com'; npm run build
 ```
 
 ```bash
 # bash
-NEXT_PUBLIC_SITE_URL='https://example.com' npm run build
+NEXT_PUBLIC_SITE_URL='https://www.palpallette.com' npm run build
 ```
 
 ## 開発
@@ -142,16 +142,24 @@ APIキーが無くても動く。テスト用の環境変数は `playwright.conf
 1. GitHub にリポジトリを作成し push する
    （リポジトリのルートはワークスペースルート `MakeWebsiteProject/`）
 2. Vercel で当該リポジトリを Import し、**Root Directory に `PalpalettHomePage` を指定**する
-3. Vercel の環境変数に上表の値を登録する（`NEXT_PUBLIC_SITE_URL` は独自ドメイン）
-4. デプロイ後、独自ドメインを割り当てる
-5. `NEXT_PUBLIC_SITE_URL` はビルド時に埋め込まれるため、**ドメイン確定後に再デプロイする**
-6. microCMS の Webhook を本番URLに向ける
+3. Vercel の環境変数に上表の値を登録する（`NEXT_PUBLIC_SITE_URL` は `https://www.palpallette.com`）
+4. 独自ドメインを割り当てる（下記「独自ドメイン」）
+5. `NEXT_PUBLIC_SITE_URL` はビルド時に埋め込まれるため、**値を変えたら再デプロイする**
+6. microCMS の Webhook を `https://www.palpallette.com/api/revalidate` に向ける
+
+### 独自ドメイン（palpallette.com）
+
+- 正式URLは **`https://www.palpallette.com`**。ルート `palpallette.com` は Vercel の Domains で
+  `www` へリダイレクト（308）する
+- DNS は GoDaddy で管理している。Vercel の Domains 画面に表示される値を登録する
+  （2026-11 時点: ルート `@` は A `216.198.79.1`、`www` は CNAME `699606b09e24b1ec.vercel-dns-017.com`。
+  値はプロジェクトごとに異なり、変わることもあるので**正は Vercel の画面**）
+- 同じドメインで Google のメールを使っている。DNS を編集するときは **MX・TXT（SPF・
+  google-site-verification）を消さない**
+- SSL 証明書は Vercel が自動で発行・更新する（DNS が正しくなってから発行まで時間がかかることがある）
 
 ## 未対応事項（公開前に対応）
 
 - 公開用メールアドレスが未確定（`src/app/contact/page.tsx` の `EMAIL` が `null`）
-- 独自ドメインが未確定（`NEXT_PUBLIC_SITE_URL`）
-- microCMS のサービスが未作成
 - 旧サイトからの作品移行（画像は旧サーバーから再アップロードが必要）
-- `src/lib/site.ts` の `TODO`: ドメイン確定後、`NEXT_PUBLIC_SITE_URL` 未設定の
-  本番ビルドを警告ではなくエラーにする
+- 旧サイト（palpallette.sakura.ne.jp）から新ドメインへの 301 リダイレクト（検索評価とブックマークの引き継ぎ。旧サーバー側の設定）

@@ -1,3 +1,81 @@
+# PROGRESS（最新タスク）: 独自ドメイン palpallette.com の公開対応（2026-11-15〜）
+
+ドメイン: `palpallette.com`、正式URLは **`https://www.palpallette.com`**（本番の robots.txt / sitemap から判明。
+Vercel の `NEXT_PUBLIC_SITE_URL` は設定・再デプロイ済み）。DNS は GoDaddy（`ns23` / `ns24.domaincontrol.com`）。
+**GoDaddy へのアクセスはユーザーが許可していない。** 確認は公開 DNS・HTTP の読み取りのみで行う。
+
+2026-11-15 の確認結果（公開情報のみ）:
+- OK: `www` は CNAME `699606b09e24b1ec.vercel-dns-017.com`（権威・Google・Cloudflare で一致）。
+  `http://www.palpallette.com` は Vercel から本サイトを配信、sitemap / og:url は `https://www.palpallette.com`。
+  Google のメール（MX・SPF）と google-site-verification の TXT あり（触らないこと）。CAA なし
+- NG: `https://www.palpallette.com` が TLS ハンドシェイクで切断（Schannel・OpenSSL とも）。
+  CT ログ（crt.sh）に Vercel 発行の証明書なし（GoDaddy 発行の `palpallette.com` 証明書が 2026-07 に1件のみ）。
+  `http` → `https` のリダイレクトもない
+- NG: ルート `palpallette.com` に A / AAAA / CNAME が無い（権威サーバーで NODATA）→ 名前解決できない
+- 推定: Vercel 側でルートドメインの検証が通らず証明書発行が止まっている可能性（Vercel の画面は見ていないので未確定）
+
+- [x] 1. （ユーザー）GoDaddy に `@` の A レコードを追加（値は Vercel の Domains 画面の表示どおり。
+       現行の Vercel では多くの場合 `216.198.79.1`）。MX / TXT は触らない。Vercel の Domains で
+       `palpallette.com` → `www.palpallette.com` へのリダイレクト、両方 Valid Configuration を確認
+       → 2026-11-15 ユーザー「DNS の設定が間違っているようなので後日修正する」
+       → 2026-11-17 ユーザー「修正した」。結果はステップ2で確認
+- [ ] 2. 再確認（読み取りのみ）: www の HTTPS と証明書（発行者・SAN・期限）、`http` → `https`、
+       ルート → `www` の 308、主要ページ・sitemap・robots・opengraph-image の 200
+       2026-11-17 途中経過:
+       - DNS OK: ルート A `216.198.79.1`（権威・8.8.8.8・1.1.1.1 で一致）、www CNAME 変化なし、MX/TXT 健在
+       - 転送 OK: `http://palpallette.com` → 308 → `https://www.palpallette.com/`
+       - **HTTPS は www・ルートとも未だ TLS 切断**。同じ IP 216.198.79.1 に SNI=`make-website-project.vercel.app`
+         なら TLS 成功 → 回線は正常、Vercel が palpallette.com の証明書を未発行（crt.sh は 502 で確認できず）
+       - scratchpad の `wait-cert.mjs` で 2 分おき・最大 40 分の確認をバックグラウンド実行中
+- [x] 3. `src/lib/site.ts` の TODO を解消: Vercel の本番ビルド（`VERCEL_ENV === "production"`）で
+       `NEXT_PUBLIC_SITE_URL` が無ければ throw。Preview（Dependabot PR）と CI（webServer.env で設定済み）は止めない。
+       Node 24 の型除去で site.ts を直接読み込み4通りを確認: 本番・未設定 → throw / 本番・設定あり → 末尾スラッシュ除去して採用 /
+       プレビュー・未設定 → 警告 + localhost / CI・ローカル・未設定 → 警告 + localhost。
+       本番の Vercel には値が設定済み（公開中の sitemap が www を指す）なので push してもビルドは失敗しない。
+       変更ファイル: `src/lib/site.ts`
+- [x] 4. README 更新: 環境変数表（本番値と「本番ビルドは未設定で失敗」）、公開手順を実ドメインに、
+       「独自ドメイン（palpallette.com）」節を追加（www が正式・ルートは 308・DNS は GoDaddy で Vercel の表示値・
+       MX/TXT を消さない・証明書は Vercel が自動発行）、未対応事項から「ドメイン未確定」「microCMS 未作成」「site.ts の TODO」を削除し
+       「旧サイトからの 301 リダイレクト」を追加、ビルド例の example.com を実ドメインに。lint・tsc 通過。
+       変更ファイル: `README.md`
+- [x] 5. lint / tsc / ビルド確認 → コミット（2026-11-17 ユーザー承認）。push はユーザー
+       - [x] lint・`next typegen && tsc` 通過。モック + e2e と同じ環境変数で `npm run build` 成功、
+             生成物の robots.txt / sitemap.xml が `https://www.palpallette.com` を指すことを確認。モックは停止済み
+       - ローカル e2e は未実行: 11/8 の `npm ci` で `node_modules` ごと Playwright ブラウザが消えている。
+         再導入は CLAUDE.md により脆弱性確認 + ユーザー承認が必要。変更は本番ビルド時の判定と README のみで
+         e2e の経路は変わらないため、push 後の CI（e2e を含む）で確認する方針をユーザーに提示
+       - [x] コミット済み（対象: `src/lib/site.ts`・`README.md`・`PROGRESS.md`。PROGRESS には別セッションの
+             Dependabot #13・#14 の記録も含めた。その記録は「次のコミットに含める」と書かれていた）
+
+## 次の具体的なアクション
+
+ステップ2: バックグラウンドの証明書確認（wait-cert.mjs）の結果を見て、HTTPS・`http`→`https`・ルート→`www`・
+主要ページを再確認する。40分で発行されなければ、Vercel の Domains 画面で「Refresh」をユーザーに依頼。
+push 後は CI（e2e を含む）の結果を確認する。
+
+---
+
+# PROGRESS: Dependabot PR #13・#14 のマージ（2026-11-08）
+
+ユーザー承認済み（2026-11-08）: #13 → #14 の順にマージ（main へのマージごとに Vercel 本番デプロイあり）。
+マージ方式はこれまでと同じマージコミット。ブランチ削除はしない。
+
+- [x] 1. #13（next / eslint-config-next 16.4.3 → 16.4.5）のマージ可否を確認してマージ
+       MERGEABLE / CLEAN を確認 → マージコミット `e270f84`
+- [x] 2. #14（tailwindcss / @tailwindcss/postcss 4.3.3 → 4.3.4）のマージ可否を確認してマージ
+       #13 マージ後も競合なし（MERGEABLE / CLEAN）→ マージコミット `dbcd60d`
+- [x] 3. main の CI と Vercel 本番デプロイの成功を確認し、ローカルを `git pull --ff-only` + `npm ci --no-audit` で同期
+       `dbcd60d` の CI 成功・Vercel 本番デプロイ成功。ローカルを `dbcd60d` へ fast-forward、
+       npm ci 後 next 16.4.5 / eslint-config-next 16.4.5 / tailwindcss 4.3.4 / @tailwindcss/postcss 4.3.4、lint 通過。
+       npm ci で `unrs-resolver` の postinstall が allowScripts 未許可と警告されたが、lint は正常に動作。
+       変更ファイル: この `PROGRESS.md` のみ（次のコミットに含める）
+
+## 次の具体的なアクション
+
+このタスクは完了。オープン中の Dependabot PR はなし。
+
+---
+
 # PROGRESS: Dependabot PR の整理と @types/node の是正
 
 対象: GitHub 上の PR #7〜#10、`PalpalettHomePage/package.json` / `package-lock.json`、
@@ -56,13 +134,15 @@
        コミット対象: `package.json` / `package-lock.json` / `.github/dependabot.yml` / この `PROGRESS.md`。
        経緯: ignore 設定が未 push の間に Dependabot が PR #12（@types/node 20 → 26.6.6）を作成。
        2026-11-08 ユーザー承認のうえ Close 済み（コメントなし）。
-- [ ] 10. push はユーザーが実行。
+- [x] 10. push はユーザーが実行（2026-11-08）。`6b17d29` の CI 成功・Vercel 本番デプロイ成功を確認。
+       push 直後の Dependabot 再実行で @types/node 26 系の PR は作られなかった（ignore が有効）。
+       変更ファイル: この `PROGRESS.md` のみ（次のコミットに含める）
 
 ## 次の具体的なアクション
 
-ステップ10: ユーザーが `git push origin main` を実行。push 後に CI（lint・型・e2e）の成功を
-`gh run list --commit <sha>`（PowerShell）で確認し、Dependabot が @types/node 26 系の PR を
-再作成しないことを次回の週次チェックで確認する。
+このタスクは完了。push 直後に Dependabot が新しく作った PR は別タスクで扱う:
+- #13 next / eslint-config-next 16.4.3 → 16.4.5（パッチ、CI 全成功）
+- #14 tailwindcss / @tailwindcss/postcss 4.3.3 → 4.3.4（パッチ、CI 全成功）
 
 メモ: 監視スクリプトの `gh api compare` は Git Bash 上で毎回エラーになっていた
 （PowerShell では正常に動作）。gh を使う監視は PowerShell で行う。
